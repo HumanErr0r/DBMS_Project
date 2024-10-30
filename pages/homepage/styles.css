@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.logo {
+    width: 100px;
+    /* Adjust the size as needed */
+    height: auto;
+    /* Maintain aspect ratio */
+}
+
+.loginbutton {
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.loginbutton:hover {
+    background-color: darkgreen;
+    /* Darker green on hover */
+}
