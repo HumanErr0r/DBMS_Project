@@ -55,12 +55,10 @@ input {
     padding: 10px;
     cursor: pointer;
     width: 100%;
-    /* Full width for the button */
 }
 
 .login-button:hover {
     background-color: rgb(50, 115, 190);
-    /* Darker green on hover */
 }
 
 .signup-button {
@@ -71,10 +69,8 @@ input {
     padding: 10px;
     cursor: pointer;
     width: 100%;
-    /* Full width for the button */
 }
 
 .signup-button:hover {
     background-color: rgb(45, 175, 45);
-    /* Darker green on hover */
 }
