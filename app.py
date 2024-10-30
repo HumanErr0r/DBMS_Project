@@ -12,7 +12,7 @@ def get_db_connection():
     conn = pymysql.connect(
         host = "localhost",
         user = "root",
-        password = "Bossness@8",
+        #password = "YOUR DB PASSWORD",
         db = "dbms_project"
     )
     return conn
