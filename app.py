@@ -35,15 +35,16 @@ def signup():
 
 @app.route('/add_user', methods = ['POST'])
 def add_user():
-    data = request.get_json()
-    first_name = data.get('first name')
-    last_name = data.get('last name')
+    data = request.form
+    first_name = data.get('firstname')
+    last_name = data.get('lastname')
     email = data.get('email')
-    password = data.get('password')
     phone = data.get('phone')
     gender = data.get('gender')
+    password = data.get('password')
+    confirm_password = data.get('password2')
 
-    if not all ([first_name, last_name, email, password, phone, gender]):
+    if not all ([first_name, last_name, email, phone, gender, password, confirm_password]):
         return jsonify({"error": "All fields are required"}), 400
     
     conn = get_db_connection()
@@ -57,11 +58,15 @@ def add_user():
         conn.close()
         return jsonify({"error": "User already exists"}), 409
     
+    if password != confirm_password:
+        conn.close()
+        return jsonify({"error": "Passwords do not match"}), 400
+    
+    # need to figure out what to do about obtaining the id to give
     insert_query = "INSERT INTO users (UserID, FirstName, LastName, Email, PhoneNumber, Password, Gender) VALUES (%d, %s, %s, %s, %s, %s, %s)"
     cursor.execute(insert_query, (1, first_name, last_name, email, phone, password, gender))
     conn.commit()
     conn.close()
-
 
     # probably need to return id
     return jsonify({"message": "Account successfully created"}), 201
@@ -76,7 +81,7 @@ def delete_user(user_id):
     cursor.execute(check_user_exist_query, (user_id))
     user = cursor.fetchone()
 
-    if user is not None:
+    if user is None:
         conn.close()
         return jsonify({"error": "User does not exist"}), 409
     
@@ -89,6 +94,45 @@ def delete_user(user_id):
 
 @app.route('/update_user/<int:user_id>', methods = ['PUT'])
 def update_user(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
+    cursor.execute(check_user_exist_query, (user_id))
+    user = cursor.fetchone()
+
+    if user is None:
+        conn.close()
+        return jsonify({"error": "User does not exist"}), 409
+    
+    data = request.form
+    if 'firstname' in data:
+        update_query = "UPDATE users SET FirstName = (%s) WHERE UserID = (%s)"
+        cursor.execute(update_query, (data.get('firstname'), user_id))
+    if 'lastname' in data:
+        update_query = "UPDATE users SET LastName = (%s) WHERE UserID = (%s)"
+        cursor.execute(update_query, (data.get('lastname'), user_id))
+    if 'email' in data:
+        update_query = "UPDATE users SET Email = (%s) WHERE UserID = (%s)"
+        cursor.execute(update_query, (data.get('email'), user_id))
+    if 'phone' in data:
+        update_query = "UPDATE users SET Phone = (%s) WHERE UserID = (%s)"
+        cursor.execute(update_query, (data.get('phone'), user_id))
+    if 'gender' in data:
+        update_query = "UPDATE users SET Gender = (%s) WHERE UserID = (%s)"
+        cursor.execute(update_query, (data.get('gender'), user_id))
+    if 'password' in data:
+        update_query = "UPDATE users SET Password = (%s) WHERE UserID = (%s)"
+        cursor.execute(update_query, (data.get('password'), user_id))
+    
+    # possibly add a check to make sure the new password is confirmed
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "Account successfully updated"}), 200
+
+@app.route('/sign_in', methods = ['POST'])
+def sign_in():
     return
 
 if __name__ == '__main__':
