@@ -72,8 +72,8 @@ def add_user():
         return render_template('signup.html', message = "Passwords do not match"), 400
     
     # need to figure out what to do about obtaining the id to give
-    insert_query = "INSERT INTO users (UserID, FirstName, LastName, Email, PhoneNumber, Password, Gender) VALUES (%d, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(insert_query, (1, first_name, last_name, email, phone, password, gender))
+    insert_query = "INSERT INTO users (UserID, FirstName, LastName, Email, PhoneNumber, Password, Gender) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(insert_query, (str(4), first_name, last_name, email, phone, password, gender))
     conn.commit()
     conn.close()
 
