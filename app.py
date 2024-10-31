@@ -133,7 +133,31 @@ def update_user(user_id):
 
 @app.route('/sign_in', methods = ['POST'])
 def sign_in():
-    return
+    data = request.form
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    check_user_exist_query = "SELECT * FROM users WHERE Email = (%s)"
+    cursor.execute(check_user_exist_query, (email))
+    user = cursor.fetchone()
+
+    if user is None:
+        conn.close()
+        return jsonify({"error": "Incorrect email or password"}), 400
+    
+    confirm_password = user[5]
+
+    if password != confirm_password:
+        conn.close()
+        return jsonify({"error": "Incorrect password"}), 400
+    
+    conn.close()
+    return jsonify({"message": "Login successful"})
 
 if __name__ == '__main__':
     app.run(debug = True)
