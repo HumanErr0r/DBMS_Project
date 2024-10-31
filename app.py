@@ -3,6 +3,7 @@ from flask_cors import CORS #type: ignore
 import json
 import pymysql #type: ignore
 import pandas as pd #type: ignore
+import sqlite3
 from dotenv import load_dotenv #type: ignore
 import os
 
@@ -12,14 +13,25 @@ CORS(app)
 load_dotenv()
 
 def get_db_connection():
-    # connect to the MySQL database
-    conn = pymysql.connect(
-        host = os.getenv('DB_HOST'),
-        user = os.getenv('DB_USER'),
-        password = os.getenv('DB_PASSWORD'),
-        db = os.getenv('DB_NAME')
-    )
+    conn = sqlite3.connect(os.getenv('DATABASE_PATH', 'test.db'))
+    conn.row_factory = sqlite3.Row
     return conn
+
+def init_db():
+    conn = get_db_connection()
+    try:
+        with open('setup.sql', 'r') as sql_file:
+            conn.executescript(sql_file.read())
+        conn.commit()
+        print("Database initialized successfully.")
+    except sqlite3.IntegrityError:
+        print("Database already initialized. Skipping initialization.")
+    except Exception as e:
+        print(f"An error occurred during database initialization: {e}")
+    finally:
+        conn.close()   
+
+init_db()
 
 @app.route('/')
 def start():
