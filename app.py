@@ -3,17 +3,21 @@ from flask_cors import CORS #type: ignore
 import json
 import pymysql #type: ignore
 import pandas as pd #type: ignore
+from dotenv import load_dotenv #type: ignore
+import os
 
 app = Flask(__name__)
 CORS(app)
 
+load_dotenv()
+
 def get_db_connection():
     # connect to the MySQL database
     conn = pymysql.connect(
-        host = "localhost",
-        user = "root",
-        #password = "YOUR DB PASSWORD",
-        db = "dbms_project"
+        host = os.getenv('DB_HOST'),
+        user = os.getenv('DB_USER'),
+        password = os.getenv('DB_PASSWORD'),
+        db = os.getenv('DB_NAME')
     )
     return conn
 
@@ -45,7 +49,9 @@ def add_user():
     confirm_password = data.get('password2')
 
     if not all ([first_name, last_name, email, phone, gender, password, confirm_password]):
-        return jsonify({"error": "All fields are required"}), 400
+        #return jsonify({"error": "All fields are required"}), 400
+        return render_template('signup.html', message = "All fields are required"), 400
+
     
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -56,11 +62,14 @@ def add_user():
 
     if user is not None:
         conn.close()
-        return jsonify({"error": "User already exists"}), 409
+        #return jsonify({"error": "User already exists"}), 409
+        return render_template('signup.html', message = "User already exists"), 400
+
     
     if password != confirm_password:
         conn.close()
-        return jsonify({"error": "Passwords do not match"}), 400
+        #return jsonify({"error": "Passwords do not match"}), 400
+        return render_template('signup.html', message = "Passwords do not match"), 400
     
     # need to figure out what to do about obtaining the id to give
     insert_query = "INSERT INTO users (UserID, FirstName, LastName, Email, PhoneNumber, Password, Gender) VALUES (%d, %s, %s, %s, %s, %s, %s)"
@@ -69,7 +78,9 @@ def add_user():
     conn.close()
 
     # probably need to return id
-    return jsonify({"message": "Account successfully created"}), 201
+    #return jsonify({"message": "Account successfully created"}), 201
+    return render_template('homepage.html', message = "Account successfully created")
+
 
 # possibly change the method
 @app.route('/delete_user/<int:user_id>', methods = ['POST'])
@@ -83,14 +94,18 @@ def delete_user(user_id):
 
     if user is None:
         conn.close()
-        return jsonify({"error": "User does not exist"}), 409
+        #return jsonify({"error": "User does not exist"}), 409
+        # probably need to change the html this refers to
+        return render_template('signup.html', message = "User does not exist"), 400
     
     delete_query = "DELETE FROM Users WHERE UserID = (%s)"
     cursor.execute(delete_query, (user_id))
     conn.commit()
     conn.close()
 
-    return jsonify({"message": "Account successfully deleted"}), 200
+    #return jsonify({"message": "Account successfully deleted"}), 200
+    return render_template('homepage.html', message = "Account successfully deleted")
+
 
 @app.route('/update_user/<int:user_id>', methods = ['PUT'])
 def update_user(user_id):
@@ -103,7 +118,9 @@ def update_user(user_id):
 
     if user is None:
         conn.close()
-        return jsonify({"error": "User does not exist"}), 409
+        #return jsonify({"error": "User does not exist"}), 409
+        # probably need to change the html this refers to
+        return render_template('signup.html', message = "User does not exist"), 400
     
     data = request.form
     if 'firstname' in data:
@@ -129,7 +146,8 @@ def update_user(user_id):
     conn.commit()
     conn.close()
 
-    return jsonify({"message": "Account successfully updated"}), 200
+    #return jsonify({"message": "Account successfully updated"}), 200
+    return render_template('homepage.html', message = "Account successfully updated")
 
 @app.route('/sign_in', methods = ['POST'])
 def sign_in():
@@ -138,7 +156,8 @@ def sign_in():
     password = data.get('password')
 
     if not email or not password:
-        return jsonify({"error": "Username and password are required"}), 400
+        #return jsonify({"error": "Username and password are required"}), 400
+        return render_template('login.html', message = "Username and password are required"), 400
     
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -148,16 +167,19 @@ def sign_in():
 
     if user is None:
         conn.close()
-        return jsonify({"error": "Incorrect email or password"}), 400
-    
+        #return jsonify({"error": "Incorrect email or password"}), 400
+        return render_template('login.html', message = "Incorrect email or password"), 400
+
     confirm_password = user[5]
 
     if password != confirm_password:
         conn.close()
-        return jsonify({"error": "Incorrect password"}), 400
-    
+        #return jsonify({"error": "Incorrect password"}), 400
+        return render_template('login.html', message = "Incorrect password"), 400
+
     conn.close()
-    return jsonify({"message": "Login successful"})
+    #return jsonify({"message": "Login successful"}), 200
+    return render_template('login.html', message = "Login successful")
 
 if __name__ == '__main__':
     app.run(debug = True)
