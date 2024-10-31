@@ -40,6 +40,14 @@ input {
     border-radius: 4px;
 }
 
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 .form-container {
     background-color: white;
     border-radius: 8px;

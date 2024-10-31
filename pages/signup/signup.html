@@ -17,7 +17,7 @@
 
     <div class="form-container">
         <h2>Sign Up</h2>
-        <form>
+        <form action="/add_user" method="POST">
             <label for="firstname">First Name:</label>
             <input type="text" id="firstname" name="firstname" required>
 
@@ -30,6 +30,14 @@
             <label for="phone">Phone Number:</label>
             <input type="tel" id="phone" name="phone" pattern="\d{10,}" required>
 
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="" disabled selected> </option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
 
@@ -40,7 +48,7 @@
         </form>
     </div>
 
-    <h4> Have an account? <a href="../login/login.html" class="login-button">Log in!.</a></h4>
+    <h4> Have an account? <a href="../login/login.html" class="login-button">Log in!</a></h4>
 
 
 </body>
