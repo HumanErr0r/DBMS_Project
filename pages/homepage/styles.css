@@ -13,13 +13,11 @@ header {
 
 .logo {
     width: 100px;
-    /* Adjust the size as needed */
     height: auto;
-    /* Maintain aspect ratio */
 }
 
 .loginbutton {
-    background-color: green;
+    background-color: rgb(65, 150, 255);
     color: white;
     border: none;
     border-radius: 5px;
@@ -28,6 +26,6 @@ header {
 }
 
 .loginbutton:hover {
-    background-color: darkgreen;
+    background-color: rgb(50, 115, 190);
     /* Darker green on hover */
 }

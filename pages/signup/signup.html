@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <header>
+        <a href="../homepage/homepage.html">
+            <img src="../../images/logo.png" alt="Logo" class="logo">
+        </a>
+    </header>
+
+    <div class="form-container">
+        <h2>Sign Up</h2>
+        <form>
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" name="firstname" required>
+
+            <label for="lastname">Last Name:</label>
+            <input type="text" id="lastname" name="lastname" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" pattern="\d{10,}" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="password">Confirm Password:</label>
+            <input type="password" id="password2" name="password2" required>
+
+            <button type="submit" class="signup-button">Sign Up</button>
+        </form>
+    </div>
+
+    <h4> Have an account? <a href="../login/login.html" class="login-button">Log in!.</a></h4>
+
+
+</body>
+
+</html>
