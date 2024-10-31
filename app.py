@@ -17,6 +17,22 @@ def get_db_connection():
     )
     return conn
 
+@app.route('/')
+def start():
+    return render_template('homepage.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/homepage')
+def homepage():
+    return render_template('homepage.html')
+
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
 @app.route('/add_user', methods = ['POST'])
 def add_user():
     data = request.get_json()

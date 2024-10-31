@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>homepage</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='homepage.css') }}" />
 </head>
 
 <body>
     <header>
-        <a href="../homepage/homepage.html">
+        <a href="/homepage">
             <img src="../../images/logo.png" alt="Logo" class="logo">
         </a>
-        <a href="../login/login.html" class="loginbutton">Login</a>
+        <a href="/login" class="loginbutton">Login</a>
     </header>
 </body>
 
