@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify #type: ignore
+from flask import Flask, render_template, request, redirect, url_for, session ,jsonify #type: ignore
 from flask_cors import CORS #type: ignore
 import json
 import pymysql #type: ignore
@@ -7,6 +7,7 @@ from dotenv import load_dotenv #type: ignore
 import os
 
 app = Flask(__name__)
+app.secret_key = 'TheSecretKey'
 CORS(app)
 
 load_dotenv()
@@ -36,6 +37,26 @@ def homepage():
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
+@app.route('/settings')
+def settings():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Get current user data from database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE UserID = %s", (session['user_id'],))
+    user = cursor.fetchone()
+    conn.close()
+
+    # Store in session for easy access in template
+    if user:
+        session['firstname'] = user[1]
+        session['lastname'] = user[2]
+        session['email'] = user[3]
+
+    return render_template('settings.html', user=user)  # Pass user to template
 
 @app.route('/add_user', methods = ['POST'])
 def add_user():
@@ -107,11 +128,11 @@ def delete_user(user_id):
     return render_template('homepage.html', message = "Account successfully deleted")
 
 
-@app.route('/update_user/<int:user_id>', methods = ['PUT'])
+@app.route('/update_user/<int:user_id>', methods = ['POST'])
 def update_user(user_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
     cursor.execute(check_user_exist_query, (user_id))
     user = cursor.fetchone()
@@ -124,6 +145,7 @@ def update_user(user_id):
     
     data = request.form
     if 'firstname' in data:
+        print("Form data received:", request.form)
         update_query = "UPDATE users SET FirstName = (%s) WHERE UserID = (%s)"
         cursor.execute(update_query, (data.get('firstname'), user_id))
     if 'lastname' in data:
@@ -132,22 +154,22 @@ def update_user(user_id):
     if 'email' in data:
         update_query = "UPDATE users SET Email = (%s) WHERE UserID = (%s)"
         cursor.execute(update_query, (data.get('email'), user_id))
-    if 'phone' in data:
-        update_query = "UPDATE users SET Phone = (%s) WHERE UserID = (%s)"
-        cursor.execute(update_query, (data.get('phone'), user_id))
-    if 'gender' in data:
-        update_query = "UPDATE users SET Gender = (%s) WHERE UserID = (%s)"
-        cursor.execute(update_query, (data.get('gender'), user_id))
-    if 'password' in data:
-        update_query = "UPDATE users SET Password = (%s) WHERE UserID = (%s)"
-        cursor.execute(update_query, (data.get('password'), user_id))
+    # if 'phone' in data:
+    #     update_query = "UPDATE users SET Phone = (%s) WHERE UserID = (%s)"
+    #     cursor.execute(update_query, (data.get('phone'), user_id))
+    # if 'gender' in data:
+    #     update_query = "UPDATE users SET Gender = (%s) WHERE UserID = (%s)"
+    #     cursor.execute(update_query, (data.get('gender'), user_id))
+    # if 'password' in data:
+    #     update_query = "UPDATE users SET Password = (%s) WHERE UserID = (%s)"
+    #     cursor.execute(update_query, (data.get('password'), user_id))
     
     # possibly add a check to make sure the new password is confirmed
     conn.commit()
     conn.close()
 
     #return jsonify({"message": "Account successfully updated"}), 200
-    return render_template('homepage.html', message = "Account successfully updated")
+    return redirect(url_for('settings'))  # This will refresh the page with new data
 
 @app.route('/sign_in', methods = ['POST'])
 def sign_in():
@@ -177,9 +199,13 @@ def sign_in():
         #return jsonify({"error": "Incorrect password"}), 400
         return render_template('login.html', message = "Incorrect password"), 400
 
+    # Store user info in session
+    session['user_id'] = user[0]  # Assuming UserID is first column
+    session['email'] = user[3]    # Assuming Email is fourth column
+    session['name'] = f"{user[1]} {user[2]}"  # Assuming FirstName and LastName are second and third columns
+
     conn.close()
-    #return jsonify({"message": "Login successful"}), 200
-    return render_template('login.html', message = "Login successful")
+    return render_template('menu.html', message="Login successful")
 
 if __name__ == '__main__':
     app.run(debug = True)

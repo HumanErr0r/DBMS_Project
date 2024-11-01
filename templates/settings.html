@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>homepage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}" />
+</head>
+
+<div class="form-container">
+    <h2>Settings for {{ session.get('firstname') }} {{ session.get('lastname') }}</h2>
+    <form action="{{ url_for('update_user', user_id=session.get('user_id')) }}" method="POST">
+        <label for="firstname">New First Name:</label>
+        <input type="text" id="firstname" name="firstname" 
+               value="{{ session.get('firstname', '') }}" required>
+
+        <label for="lastname">New Last Name:</label>
+        <input type="text" id="lastname" name="lastname" 
+               value="{{ session.get('lastname', '') }}" required>
+
+        <label for="email">New Email:</label>
+        <input type="email" id="email" name="email" 
+               value="{{ session.get('email', '') }}" required>
+
+        <!-- The form will send to /update_user/[user_id] automatically -->
+        <button type="submit">Update Settings</button>
+    </form>
+
+    <!-- Example of showing user info -->
+    <div class="user-info">
+        <p>Logged in as: {{ session.get('email', 'Not logged in') }}</p>
+        <p>User ID: {{ session.get('user_id', 'Unknown') }}</p>
+    </div>
+
+</div>
+
+
+<body>
+    <form action="{{ url_for('delete_user', user_id=session.get('user_id')) }}" method="POST">
+        <button type="delete">Delete Account</button>
+    </form>
+</body>
+
+</html>
