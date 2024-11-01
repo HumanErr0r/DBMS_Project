@@ -92,15 +92,27 @@ def add_user():
         #return jsonify({"error": "Passwords do not match"}), 400
         return render_template('signup.html', message = "Passwords do not match"), 400
     
+
+    check_num_users_query = "SELECT UserID FROM users"
+    cursor.execute(check_num_users_query)
+    user = cursor.fetchall()
+
+    user_id = 0
+
+    if len(user) > 0:
+        user_id = user[-1][0] + 1
+    else:
+        user_id = 1
+
     # need to figure out what to do about obtaining the id to give
     insert_query = "INSERT INTO users (UserID, FirstName, LastName, Email, PhoneNumber, Password, Gender) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(insert_query, (str(4), first_name, last_name, email, phone, password, gender))
+    cursor.execute(insert_query, (str(user_id), first_name, last_name, email, phone, password, gender))
     conn.commit()
     conn.close()
 
     # probably need to return id
     #return jsonify({"message": "Account successfully created"}), 201
-    return render_template('homepage.html', message = "Account successfully created")
+    return render_template('homepage.html', message = "Account successfully created", user_id = user_id)
 
 
 # possibly change the method
