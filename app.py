@@ -105,14 +105,11 @@ def add_user():
     else:
         user_id = 1
 
-    # need to figure out what to do about obtaining the id to give
     insert_query = "INSERT INTO users (UserID, FirstName, LastName, Email, PhoneNumber, Password, Gender) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     cursor.execute(insert_query, (str(user_id), first_name, last_name, email, phone, hashed_password, gender))
     conn.commit()
     conn.close()
 
-    # probably need to return id
-    #return jsonify({"message": "Account successfully created"}), 201
     return render_template('login.html', message = "Account successfully created", user_id = user_id)
 
 
@@ -220,6 +217,50 @@ def sign_in():
 
     conn.close()
     return render_template('menu.html', message="Login successful")
+
+@app.route('/add_property', methods = ['POST'])
+def add_property():
+    data = request.form
+    property_name = data.get('propertyname')
+    street = data.get('street')
+    city = data.get('city')
+    state = data.get('state')
+    zip_code = data.get('zipcode')
+    source = data.get('source')
+
+    if not all ([property_name, street, city, state, zip_code, source]):
+        # change the name to whatever .html file it should be
+        return render_template('add_property.html', message = "All fields are required"), 400
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_property_exist_query = "SELECT * FROM property WHERE PropertyName = (%s)"
+    cursor.execute(check_property_exist_query, (property_name))
+    property = cursor.fetchone()
+
+    if property is not None:
+        conn.close()
+        # change the name to whatever .html file it should be
+        return render_template('add_property.html', message = "Property already exists"), 400
+    
+    check_num_property_query = "SELECT PropertyID FROM property"
+    cursor.execute(check_num_property_query)
+    property = cursor.fetchall()
+    property_id = 0
+
+    if len(property) > 0:
+        property_id = property[-1][0] + 1
+    else:
+        property_id = 1
+
+    insert_query = "INSERT INTO property (PropertyID, PropertyName, Street, City, State, ZipCode, Source) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(insert_query, (str(property_id), property_name, street, city, state, zip_code, source))
+    conn.commit()
+    conn.close()
+
+    # change the name to whatever .html file it should be
+    return render_template('property.html', message = "Account successfully created", property_id = property_id)
 
 if __name__ == '__main__':
     app.run(debug = True)
