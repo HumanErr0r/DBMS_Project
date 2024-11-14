@@ -5,6 +5,7 @@ import pymysql #type: ignore
 import pandas as pd #type: ignore
 from dotenv import load_dotenv #type: ignore
 import os
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'TheSecretKey'
@@ -85,14 +86,14 @@ def add_user():
         conn.close()
         #return jsonify({"error": "User already exists"}), 409
         return render_template('signup.html', message = "User already exists"), 400
-
     
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
     if password != confirm_password:
         conn.close()
         #return jsonify({"error": "Passwords do not match"}), 400
         return render_template('signup.html', message = "Passwords do not match"), 400
     
-
     check_num_users_query = "SELECT UserID FROM users"
     cursor.execute(check_num_users_query)
     user = cursor.fetchall()
@@ -106,13 +107,13 @@ def add_user():
 
     # need to figure out what to do about obtaining the id to give
     insert_query = "INSERT INTO users (UserID, FirstName, LastName, Email, PhoneNumber, Password, Gender) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(insert_query, (str(user_id), first_name, last_name, email, phone, password, gender))
+    cursor.execute(insert_query, (str(user_id), first_name, last_name, email, phone, hashed_password, gender))
     conn.commit()
     conn.close()
 
     # probably need to return id
     #return jsonify({"message": "Account successfully created"}), 201
-    return render_template('homepage.html', message = "Account successfully created", user_id = user_id)
+    return render_template('login.html', message = "Account successfully created", user_id = user_id)
 
 
 # possibly change the method
@@ -204,9 +205,9 @@ def sign_in():
         #return jsonify({"error": "Incorrect email or password"}), 400
         return render_template('login.html', message = "Incorrect email or password"), 400
 
-    confirm_password = user[5]
+    confirm_password = str(user[5])
 
-    if password != confirm_password:
+    if not(bcrypt.checkpw(password.encode('utf-8'), confirm_password.encode('utf-8'))):
         conn.close()
         #return jsonify({"error": "Incorrect password"}), 400
         return render_template('login.html', message = "Incorrect password"), 400
