@@ -174,8 +174,9 @@ def update_user(user_id):
     #     update_query = "UPDATE users SET Gender = (%s) WHERE UserID = (%s)"
     #     cursor.execute(update_query, (data.get('gender'), user_id))
     # if 'password' in data:
+    #     hashed_password = bcrypt.hashpw(data.get('password').encode('utf-8'), bcrypt.gensalt())
     #     update_query = "UPDATE users SET Password = (%s) WHERE UserID = (%s)"
-    #     cursor.execute(update_query, (data.get('password'), user_id))
+    #     cursor.execute(update_query, (hashed_password, user_id))
     
     # possibly add a check to make sure the new password is confirmed
     conn.commit()
