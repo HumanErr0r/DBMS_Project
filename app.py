@@ -262,5 +262,65 @@ def add_property():
     # change the name to whatever .html file it should be
     return render_template('property.html', message = "Account successfully created", property_id = property_id)
 
+@app.route('/delete_property/<int:property_id>', methods = ['POST'])
+def delete_property(property_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    check_property_exist_query = "SELECT * FROM property WHERE PropertyID = (%s)"
+    cursor.execute(check_property_exist_query, (property_id))
+    property = cursor.fetchone()
+
+    if property is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('property_settings.html', message = "Property does not exist"), 400
+    
+    delete_query = "DELETE FROM Property WHERE PropertyID = (%s)"
+    cursor.execute(delete_query, (property_id))
+    conn.commit()
+    conn.close()
+
+    return render_template('homepage.html', message = "Property successfully deleted")
+
+@app.route('/update_property/<int:property_id>', methods = ['POST'])
+def update_property(property_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_property_exist_query = "SELECT * FROM property WHERE PropertyID = (%s)"
+    cursor.execute(check_property_exist_query, (property_id))
+    property = cursor.fetchone()
+
+    if property is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('property_settings.html', message = "Property does not exist"), 400
+    
+    data = request.form
+    if 'propertyname' in data:
+        update_query = "UPDATE property SET PropertyName = (%s) WHERE PropertyID = (%s)"
+        cursor.execute(update_query, (data.get('propertyname'), property_id))
+    if 'street' in data:
+        update_query = "UPDATE property SET Street = (%s) WHERE PropertyID = (%s)"
+        cursor.execute(update_query, (data.get('street'), property_id))
+    if 'city' in data:
+        update_query = "UPDATE property SET City = (%s) WHERE PropertyID = (%s)"
+        cursor.execute(update_query, (data.get('city'), property_id))
+    if 'state' in data:
+        update_query = "UPDATE property SET State = (%s) WHERE PropertyID = (%s)"
+        cursor.execute(update_query, (data.get('state'), property_id))
+    if 'zipcode' in data:
+        update_query = "UPDATE property SET ZipCode = (%s) WHERE PropertyID = (%s)"
+        cursor.execute(update_query, (data.get('zipcode'), property_id))
+    if 'source' in data:
+        update_query = "UPDATE property SET Source = (%s) WHERE PropertyID = (%s)"
+        cursor.execute(update_query, (data.get('source'), property_id))
+    
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('property_settings'))  # This will refresh the page with new data
+
 if __name__ == '__main__':
     app.run(debug = True)
