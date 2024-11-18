@@ -380,5 +380,67 @@ def add_listing(user_id):
     # change the name to whatever .html file it should be
     return render_template('listings.html', message = "Listing successfully created", listing_id = listing_id)
 
+@app.route('/delete_listing/<int:listing_id>', methods = ['POST'])
+def delete_listing(listing_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    check_listing_exist_query = "SELECT * FROM listings WHERE ListingID = (%s)"
+    cursor.execute(check_listing_exist_query, (listing_id))
+    listing = cursor.fetchone()
+
+    if listing is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('listings.html', message = "Listing does not exist"), 400
+    
+    delete_query = "DELETE FROM listings WHERE ListingID = (%s)"
+    cursor.execute(delete_query, (listing_id))
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return render_template('homepage.html', message = "Listing successfully deleted")
+
+@app.route('/update_listing/<int:listing_id>', methods = ['POST'])
+def update_listing(listing_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_listing_exist_query = "SELECT * FROM listing WHERE ListingID = (%s)"
+    cursor.execute(check_listing_exist_query, (listing_id))
+    listing = cursor.fetchone()
+
+    if listing is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('listings.html', message = "Listing does not exist"), 400
+    
+    data = request.form
+    if 'squarefeet' in data:
+        update_query = "UPDATE listing SET SquareFeet = (%s) WHERE ListingID = (%s)"
+        cursor.execute(update_query, (data.get('squarefeet'), listing_id))
+    if 'source' in data:
+        update_query = "UPDATE listing SET Source = (%s) WHERE ListingID = (%s)"
+        cursor.execute(update_query, (data.get('source'), listing_id))
+    if 'price' in data:
+        update_query = "UPDATE listing SET Price = (%s) WHERE ListingID = (%s)"
+        cursor.execute(update_query, (data.get('price'), listing_id))
+    if 'rooms' in data:
+        update_query = "UPDATE listing SET Rooms = (%s) WHERE ListingID = (%s)"
+        cursor.execute(update_query, (data.get('rooms'), listing_id))
+    if 'title' in data:
+        update_query = "UPDATE listing SET Title = (%s) WHERE ListingID = (%s)"
+        cursor.execute(update_query, (data.get('title'), listing_id))
+    if 'bathrooms' in data:
+        update_query = "UPDATE listing SET Bathrooms = (%s) WHERE ListingID = (%s)"
+        cursor.execute(update_query, (data.get('bathrooms'), listing_id))
+    
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return redirect(url_for('listings'))  # This will refresh the page with new data
+
 if __name__ == '__main__':
     app.run(debug = True)
