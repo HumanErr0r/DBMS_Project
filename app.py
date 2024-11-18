@@ -322,5 +322,63 @@ def update_property(property_id):
 
     return redirect(url_for('property_settings'))  # This will refresh the page with new data
 
+@app.route('/add_listing/<int:user_id>', methods = ['POST'])
+def add_listing(user_id):
+    data = request.form
+    property_name = data.get('propertyname')
+    sq_feet = data.get('squarefeet')
+    source = data.get('source')
+    price = data.get('price')
+    rooms = data.get('zipcode')
+    title = data.get('title')
+    bathrooms = data.get('bathrooms')
+
+    if not all ([property_name, sq_feet, source, price, rooms, title, bathrooms]):
+        # change the name to whatever .html file it should be
+        return render_template('add_listing.html', message = "All fields are required"), 400
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_property_exist_query = "SELECT PropertyID FROM Property WHERE PropertyName = (%s)"
+    cursor.execute(check_property_exist_query, (property_name))
+    property_id = cursor.fetchone()
+
+    if property_id is None:
+        conn.close()
+        # change the name to whatever .html file it should be
+        return render_template('add_listing.html', message = "Property does not exist"), 400 
+    
+    property_id = property_id[0]
+
+    check_listing_exist_query = """SELECT * FROM listings WHERE OwnerID = (%s) AND PropertyID = (%s) AND 
+                                    SquareFeet = (%s) AND Source = (%s) AND Price = (%s) AND 
+                                    Rooms = (%s) AND Title = (%s) AND Bathrooms = (%s)"""
+    cursor.execute(check_listing_exist_query, (str(user_id), str(property_id), sq_feet, source, price, rooms, title, bathrooms))
+    listing = cursor.fetchone()
+
+    if listing is not None:
+        conn.close()
+        # change the name to whatever .html file it should be
+        return render_template('add_listing.html', message = "Listing already exists"), 400
+    
+    check_num_listing_query = "SELECT ListingID FROM listings"
+    cursor.execute(check_num_listing_query)
+    listing = cursor.fetchall()
+    listing_id = 0
+
+    if len(listing) > 0:
+        listing_id = listing[-1][0] + 1
+    else:
+        listing_id = 1
+
+    insert_query = "INSERT INTO listings VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(insert_query, (str(listing_id), str(user_id), str(property_id), sq_feet, source, price, rooms, title, bathrooms))
+    conn.commit()
+    conn.close()
+
+    # change the name to whatever .html file it should be
+    return render_template('listings.html', message = "Listing successfully created", listing_id = listing_id)
+
 if __name__ == '__main__':
     app.run(debug = True)
