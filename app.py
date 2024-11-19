@@ -489,9 +489,8 @@ def add_review(property_id, user_id):
     insert_query = "INSERT INTO reviews VALUES (%s, %s, %s, %s, %s, %s)"
     cursor.execute(insert_query, (str(review_id), str(property_id), str(user_id), rating, review_date, review))
     conn.commit()
-    conn.close()
-
     review_data = get_review_data(property_id)
+    conn.close()
         
     # probably need to change the html this refers to
     return render_template('property_review.html', reviews = review_data, message = "Review added successfully!")   
@@ -540,5 +539,5 @@ def get_review_data(property_id):
 
     return review_data
 
-if __name__ == '__main__':
+if __name__ == '__main__':    
     app.run(debug = True)
