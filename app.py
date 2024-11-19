@@ -539,5 +539,58 @@ def get_review_data(property_id):
 
     return review_data
 
+@app.route('/delete_review/<int:review_id>', methods = ['POST'])
+def delete_review(review_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    check_review_exist_query = "SELECT * FROM reviews WHERE ReviewID = (%s)"
+    cursor.execute(check_review_exist_query, (review_id))
+    review = cursor.fetchone()
+
+    if review is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('property_review.html', message = "Review does not exist"), 400
+    
+    delete_query = "DELETE FROM reviews WHERE ReviewID = (%s)"
+    cursor.execute(delete_query, (review_id))
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return render_template('property_review.html', message = "Review successfully deleted")
+
+@app.route('/update_review/<int:review_id>', methods = ['POST'])
+def update_review(review_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_review_exist_query = "SELECT * FROM reviews WHERE ReviewID = (%s)"
+    cursor.execute(check_review_exist_query, (review_id))
+    review = cursor.fetchone()
+
+    if review is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('property_review.html', message = "Review does not exist"), 400
+    
+    data = request.form
+    if 'rating' in data:
+        update_query = "UPDATE reviews SET Rating = (%s) WHERE ReviewID = (%s)"
+        cursor.execute(update_query, (data.get('rating'), review_id))
+    if 'reviewdate' in data:
+        update_query = "UPDATE reviews SET ReviewDate = (%s) WHERE ReviewID = (%s)"
+        cursor.execute(update_query, (data.get('reviewdate'), review_id))
+    if 'description' in data:
+        update_query = "UPDATE reviews SET Description = (%s) WHERE ReviewID = (%s)"
+        cursor.execute(update_query, (data.get('description'), review_id))
+    
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return redirect(url_for('listings'))  # This will refresh the page with new data
+
 if __name__ == '__main__':    
     app.run(debug = True)
