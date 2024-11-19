@@ -6,6 +6,7 @@ import pandas as pd #type: ignore
 from dotenv import load_dotenv #type: ignore
 import os
 import bcrypt
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'TheSecretKey'
@@ -441,6 +442,103 @@ def update_listing(listing_id):
 
     # probably need to change the html this refers to
     return redirect(url_for('listings'))  # This will refresh the page with new data
+
+@app.route('/add_review/<int:property_id>/<int:user_id>', methods = ['POST'])
+def add_review(property_id, user_id):
+    data = request.form
+    rating = data.get('rating')
+    review_date = data.get('reviewdata')
+    review = data.get('review')
+
+    if not all ([rating, review_date, review]):
+        # probably need to change the html this refers to
+        return render_template('property_review.html', message = "All fields are required"), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_property_exist_query = "SELECT * FROM property WHERE PropertyID = (%s)"
+    cursor.execute(check_property_exist_query, (property_id))
+    property = cursor.fetchone()
+
+    if property is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('property_review.html', message = "Property does not exist"), 400
+    
+    check_user_exist_query = "SELECT * FROM user WHERE UserID = (%s)"
+    cursor.execute(check_user_exist_query, (user_id))
+    user = cursor.fetchone()
+
+    if user is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('property_review.html', message = "User does not exists"), 400
+    
+    check_num_reviews_query = "SELECT ReviewID FROM reviews"
+    cursor.execute(check_num_reviews_query)
+    review = cursor.fetchall()
+
+    review_id = 0
+
+    if len(review) > 0:
+        review_id = review[-1][0] + 1
+    else:
+        review_id = 1
+
+    insert_query = "INSERT INTO reviews VALUES (%s, %s, %s, %s, %s, %s)"
+    cursor.execute(insert_query, (str(review_id), str(property_id), str(user_id), rating, review_date, review))
+    conn.commit()
+    conn.close()
+
+    review_data = get_review_data(property_id)
+        
+    # probably need to change the html this refers to
+    return render_template('property_review.html', reviews = review_data, message = "Review added successfully!")   
+
+def get_review_data(property_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    property_query = "SELECT * FROM reviews WHERE PropertyID = (%s)"
+    cursor.execute(property_query, (str(property_id)))
+    reviews = cursor.fetchall()
+
+    property_name_query = "SELECT PropertyName, Street FROM property WHERE PropertyID = (%s)"
+    cursor.execute(property_name_query, (str(property_id)))
+    property = cursor.fetchall()
+    property_name = property[0][0]
+    property_location = property[0][1]
+
+    review_data = {
+        "id": property_id,
+        "name": property_name,
+        "location": property_location,
+        "reviews": []
+    }
+
+    for i in range(len(reviews)):
+        user_id = reviews[i][2]
+        rating = reviews[i][3]
+        date = reviews[i][4].strftime('%Y-%m-%d')
+        review = reviews[i][5]
+
+        user_name_query = "SELECT FirstName, LastName FROM users WHERE UserID = (%s)"
+        cursor.execute(user_name_query, (str(user_id)))
+        user_name = cursor.fetchall()
+        name = user_name[0][0] + " " + user_name[0][1]
+
+        reivew_dict = {
+            "user_id": user_id,
+            "user_name": name,
+            "date": date,
+            "review": review,
+            "rating": rating
+        }
+
+        review_data['reviews'].append(reivew_dict)
+
+    return review_data
 
 if __name__ == '__main__':
     app.run(debug = True)
