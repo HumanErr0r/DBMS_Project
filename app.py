@@ -590,7 +590,109 @@ def update_review(review_id):
     conn.close()
 
     # probably need to change the html this refers to
-    return redirect(url_for('listings'))  # This will refresh the page with new data
+    return redirect(url_for('listings'))  # This will refresh the page with new 
 
-if __name__ == '__main__':    
+@app.route('/add_preferences/<int:user_id>', methods = ['POST'])
+def add_preferences(user_id):
+    data = request.form
+    zip_code = data.get('zipcode')
+    budget = data.get('budget')
+    rooms = data.get('rooms')
+    property_type = data.get('propertytype')
+    lease_duration = data.get('leaseduration')
+
+    if not all ([zip_code, budget, rooms, property_type, lease_duration]):
+        # probably need to change the html this refers to
+        return render_template('add_preferences.html', message = "All fields are required"), 400
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
+    cursor.execute(check_user_exist_query, (str(user_id)))
+    user = cursor.fetchone()
+
+    if user is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('add_preferences.html', message = "User does not exist. Create an account"), 400
+    
+    check_num_preferences_query = "SELECT PreferenceID FROM preferences"
+    cursor.execute(check_num_preferences_query)
+    preferences = cursor.fetchall()
+    preference_id = 0
+
+    if len(preferences) > 0:
+        preference_id = preferences[-1][0] + 1
+    else:
+        preference_id = 1
+
+    insert_query = "INSERT INTO preferences VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(insert_query, (str(preference_id), str(user_id), zip_code, budget, rooms, property_type, lease_duration))
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return render_template('add_preferences.html', message = "Account successfully created", preference_id = preference_id)
+
+@app.route('/delete_preferences/<int:preference_id>', methods = ['POST'])
+def delete_preferences(preference_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    check_preference_exist_query = "SELECT * FROM preferences WHERE PreferenceID = (%s)"
+    cursor.execute(check_preference_exist_query, (preference_id))
+    preference = cursor.fetchone()
+
+    if preference is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('preferences.html', message = "Preferences do not exist"), 400
+    
+    delete_query = "DELETE FROM preferences WHERE PreferenceID = (%s)"
+    cursor.execute(delete_query, (preference_id))
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return render_template('settings.html', message = "Preferences successfully deleted")
+
+@app.route('/update_preferences/<int:preference_id>', methods = ['POST'])
+def update_preferences(preference_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_preference_exist_query = "SELECT * FROM preferences WHERE PreferenceID = (%s)"
+    cursor.execute(check_preference_exist_query, (preference_id))
+    preference = cursor.fetchone()
+
+    if preference is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('preferences.html', message = "Preference does not exist"), 400
+    
+    data = request.form
+    if 'zipcode' in data:
+        update_query = "UPDATE preferences SET ZipCode = (%s) WHERE PreferenceID = (%s)"
+        cursor.execute(update_query, (data.get('zipcode'), preference_id))
+    if 'budget' in data:
+        update_query = "UPDATE preferences SET Budget = (%s) WHERE PreferenceID = (%s)"
+        cursor.execute(update_query, (data.get('budget'), preference_id))
+    if 'rooms' in data:
+        update_query = "UPDATE preferences SET Rooms = (%s) WHERE PreferenceID = (%s)"
+        cursor.execute(update_query, (data.get('rooms'), preference_id))
+    if 'propertytype' in data:
+        update_query = "UPDATE preferences SET PropertyType = (%s) WHERE PreferenceID = (%s)"
+        cursor.execute(update_query, (data.get('propertytype'), preference_id))
+    if 'leaseduration' in data:
+        update_query = "UPDATE preferences SET LeaseDuration = (%s) WHERE PreferenceID = (%s)"
+        cursor.execute(update_query, (data.get('leaseduration'), preference_id))
+    
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return # redirect(url_for('listings'))  # This will refresh the page with new 
+
+if __name__ == '__main__':  
     app.run(debug = True)
