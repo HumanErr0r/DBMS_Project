@@ -694,5 +694,68 @@ def update_preferences(preference_id):
     # probably need to change the html this refers to
     return # redirect(url_for('listings'))  # This will refresh the page with new 
 
+@app.route('/add_listing_interest/<int:listing_id>/<int:user_id>', methods = ['POST'])
+def add_listing_interest(listing_id, user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_listing_exist_query = "SELECT * FROM listings WHERE ListingID = (%s)"
+    cursor.execute(check_listing_exist_query, (str(listing_id)))
+    listing = cursor.fetchone()
+
+    if listing is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('add_listing_interest.html', message = "Listing does not exist"), 400
+
+    check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
+    cursor.execute(check_user_exist_query, (str(user_id)))
+    user = cursor.fetchone()
+
+    if user is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('add_preferences.html', message = "User does not exist. Create an account"), 400
+    
+    check_num_listing_interest_query = "SELECT ListingInterestGroupID FROM listing_interest"
+    cursor.execute(check_num_listing_interest_query)
+    listing_interest = cursor.fetchall()
+    listing_interest_id = 0
+
+    if len(listing_interest) > 0:
+        listing_interest_id = listing_interest[-1][0] + 1
+    else:
+        listing_interest_id = 1
+
+    insert_query = "INSERT INTO preferences VALUES (%s, %s, %s)"
+    cursor.execute(insert_query, (str(listing_interest_id), str(listing_id), str(user_id)))
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return render_template('add_listing_interest.html', message = "Listing interest successfully created", listing_interest_id = listing_interest_id)
+
+@app.route('/delete_listing_interest/<int:listing_interest_id>', methods = ['POST'])
+def delete_listing_interest(listing_interest_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    check_listing_interest_exist_query = "SELECT * FROM listing_interest WHERE ListingInterestGroupID = (%s)"
+    cursor.execute(check_listing_interest_exist_query, (listing_interest_id))
+    listing_interest = cursor.fetchone()
+
+    if listing_interest is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('listing_interests.html', message = "Listing interests do not exist"), 400
+    
+    delete_query = "DELETE FROM listing_interest WHERE ListingInterestGroupID = (%s)"
+    cursor.execute(delete_query, (listing_interest_id))
+    conn.commit()
+    conn.close()
+
+    # probably need to change the html this refers to
+    return render_template('listing_interest.html', message = "Listing interest successfully deleted")
+
 if __name__ == '__main__':  
     app.run(debug = True)
