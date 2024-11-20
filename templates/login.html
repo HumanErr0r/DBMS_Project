@@ -10,7 +10,7 @@
 
 <body>
     <header>
-        <a href="/homepage">
+        <a href="{{ url_for('homepage')}}">
             <img src="{{url_for('static', filename='logo.png')}}" class="logo" />
         </a>
     </header>
@@ -23,6 +23,13 @@
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
+
+            <input type="hidden" name="admin" value="false">
+            <div class="checkbox-container">
+                <label for="admin" class="checkbox-label">Are you an admin?:</label>
+                <input type="checkbox" id="admin" name="admin" value="true">
+            </div>
+
 
             <button type="submit" class="login-button">Log In</button>
         </form>

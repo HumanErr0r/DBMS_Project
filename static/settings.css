@@ -1,0 +1,31 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+.logout-button {
+    display: inline-block;
+    /* Makes the link behave like an inline button */
+    padding: 10px 20px;
+    /* Adds padding to the link (button size) */
+    background-color: rgb(255, 65, 65);
+    /* Button background color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.logout-button:hover {
+    background-color: rgb(190, 50, 50);
+    /* Darker green on hover */
+}

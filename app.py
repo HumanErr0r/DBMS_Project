@@ -26,6 +26,8 @@ def get_db_connection():
 
 @app.route('/')
 def start():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
     return render_template('homepage.html')
 
 @app.route('/login')
@@ -34,7 +36,22 @@ def login():
 
 @app.route('/homepage')
 def homepage():
-    return render_template('homepage.html')
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE UserID = %s", (session['user_id'],))
+    user = cursor.fetchone()
+    conn.close()
+
+    # Store in session for easy access in template
+    if user:
+        session['firstname'] = user[1]
+        session['lastname'] = user[2]
+        session['email'] = user[3]
+
+    return render_template('homepage.html', user=user)  # Pass user to template
+    #return render_template('homepage.html')
 
 @app.route('/signup')
 def signup():
@@ -217,7 +234,15 @@ def sign_in():
     session['name'] = f"{user[1]} {user[2]}"  # Assuming FirstName and LastName are second and third columns
 
     conn.close()
-    return render_template('menu.html', message="Login successful")
+    return render_template('homepage.html', message="Login successful")
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    # Expire the session cookie manually
+    resp = redirect(url_for('login'))
+    resp.set_cookie('session', '', expires=datetime(2000, 1, 1))
+    session.clear()  # Clear the Flask session data
+    return resp
 
 @app.route('/add_property', methods = ['POST'])
 def add_property():

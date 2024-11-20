@@ -4,16 +4,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>homepage</title>
+    <title>Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='homepage.css') }}" />
 </head>
 
 <body>
     <header>
-        <a href="/homepage">
+        <a href="{{ url_for('homepage')}}">
             <img src="{{url_for('static', filename='logo.png')}}" class="logo" />
         </a>
-        <a href="/login" class="loginbutton">Login</a>
+        <a href="/settings" class="settingsbutton">Settings</a>
     </header>
 </body>
 

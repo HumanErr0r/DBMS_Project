@@ -32,6 +32,24 @@ label {
     margin-bottom: 5px;
 }
 
+.checkbox-container {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.checkbox-label {
+    margin: 0px;
+    padding: 0;
+    white-space: nowrap;
+}
+
+input[type="checkbox"] {
+    margin: 0;
+    padding: 0;
+}
+
 input {
     width: 93%;
     padding: 10px;
