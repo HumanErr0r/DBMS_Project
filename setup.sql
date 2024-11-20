@@ -1,6 +1,3 @@
-SET FOREIGN_KEY_CHECKS=0;
-
-
 -- users
 CREATE TABLE `users` (
   `UserID` int NOT NULL,
@@ -8,27 +5,39 @@ CREATE TABLE `users` (
   `LastName` varchar(45) DEFAULT NULL,
   `Email` varchar(45) DEFAULT NULL,
   `PhoneNumber` varchar(45) DEFAULT NULL,
-  `Password` varchar(45) DEFAULT NULL,
+  `Password` varchar(100) DEFAULT NULL,
   `Gender` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `UserID_UNIQUE` (`UserID`),
   UNIQUE KEY `Email_UNIQUE` (`Email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
+-- admin
+CREATE TABLE `admins` (
+  `AdminID` int NOT NULL,
+  `FirstName` varchar(45) DEFAULT NULL,
+  `LastName` varchar(45) DEFAULT NULL,
+  `Email` varchar(45) DEFAULT NULL,
+  `PhoneNumber` varchar(45) DEFAULT NULL,
+  `Password` varchar(100) DEFAULT NULL,
+  `Gender` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`AdminID`),
+  UNIQUE KEY `UserID_UNIQUE` (`AdminID`),
+  UNIQUE KEY `Email_UNIQUE` (`Email`)
+);
 
 -- property
 CREATE TABLE `property` (
   `PropertyID` int NOT NULL,
+  `PropertyName` varchar(45) DEFAULT NULL,
   `Street` varchar(45) DEFAULT NULL,
   `City` varchar(45) DEFAULT NULL,
   `State` varchar(45) DEFAULT NULL,
   `ZipCode` varchar(45) DEFAULT NULL,
-  `SquareFeet` int DEFAULT NULL,
   `Source` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`PropertyID`),
   UNIQUE KEY `PropertyID_UNIQUE` (`PropertyID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+);
 
 -- listings
 CREATE TABLE `listings` (
@@ -43,12 +52,9 @@ CREATE TABLE `listings` (
   `Bathrooms` int DEFAULT NULL,
   PRIMARY KEY (`ListingID`),
   UNIQUE KEY `ListingID_UNIQUE` (`ListingID`),
-  UNIQUE KEY `OwnerID_UNIQUE` (`OwnerID`),
-  UNIQUE KEY `PropertyID_UNIQUE` (`PropertyID`),
   CONSTRAINT `ListingsPropertyID` FOREIGN KEY (`PropertyID`) REFERENCES `property` (`PropertyID`),
   CONSTRAINT `OwnerID` FOREIGN KEY (`OwnerID`) REFERENCES `users` (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+);
 
 -- listing interest
 CREATE TABLE `listing_interest` (
@@ -57,12 +63,9 @@ CREATE TABLE `listing_interest` (
   `UserID` int NOT NULL,
   PRIMARY KEY (`ListingInterestGroupID`),
   UNIQUE KEY `ListingInterestGroupID_UNIQUE` (`ListingInterestGroupID`),
-  UNIQUE KEY `LisingID_UNIQUE` (`ListingID`),
-  UNIQUE KEY `UserID_UNIQUE` (`UserID`),
   CONSTRAINT `ListingID` FOREIGN KEY (`ListingID`) REFERENCES `listings` (`ListingID`),
   CONSTRAINT `ListingInterestUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+);
 
 -- preferences
 CREATE TABLE `preferences` (
@@ -77,8 +80,7 @@ CREATE TABLE `preferences` (
   UNIQUE KEY `PreferenceID_UNIQUE` (`PreferenceID`),
   UNIQUE KEY `UserID_UNIQUE` (`UserID`),
   CONSTRAINT `PreferencesUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+);
 
 -- reviews
 CREATE TABLE `reviews` (
@@ -90,12 +92,6 @@ CREATE TABLE `reviews` (
   `Description` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`ReviewID`),
   UNIQUE KEY `ReviewID_UNIQUE` (`ReviewID`),
-  UNIQUE KEY `PropertyID_UNIQUE` (`PropertyID`),
-  UNIQUE KEY `UserID_UNIQUE` (`UserID`),
   CONSTRAINT `PropertyID` FOREIGN KEY (`PropertyID`) REFERENCES `property` (`PropertyID`),
   CONSTRAINT `PropertyUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
-SET FOREIGN_KEY_CHECKS=1;
-
+);
