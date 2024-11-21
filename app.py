@@ -28,7 +28,7 @@ def get_db_connection():
 def start():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('homepage.html')
+    return render_template('login.html')
 
 @app.route('/login')
 def login():
@@ -56,22 +56,6 @@ def homepage():
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
-
-@app.route('/listingsearch')
-def listingsearch():
-    return render_template('listingsearch.html')
-
-@app.route('/roommatesearch')
-def roommatesearch():
-    return render_template('roommatesearch.html')
-
-@app.route('/listings')
-def listings():
-    return render_template('listings.html')
-
-@app.route('/preferences')
-def preferences():
-    return render_template('preferences.html')
 
 @app.route('/settings')
 def settings():
@@ -288,7 +272,7 @@ def add_property():
 
     if not all ([property_name, street, city, state, zip_code, source]):
         # change the name to whatever .html file it should be
-        return render_template('add_property.html', message = "All fields are required"), 400
+        return render_template('listings.html', message = "All fields are required"), 400
     
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -300,7 +284,7 @@ def add_property():
     if property is not None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('add_property.html', message = "Property already exists"), 400
+        return render_template('listings.html', message = "Property already exists"), 400
     
     check_num_property_query = "SELECT PropertyID FROM property"
     cursor.execute(check_num_property_query)
@@ -318,7 +302,7 @@ def add_property():
     conn.close()
 
     # change the name to whatever .html file it should be
-    return render_template('property.html', message = "Account successfully created", property_id = property_id)
+    return render_template('listings.html', message = "Account successfully created", property_id = property_id)
 
 @app.route('/delete_property/<int:property_id>', methods = ['POST'])
 def delete_property(property_id):
