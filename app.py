@@ -28,7 +28,7 @@ def get_db_connection():
 def start():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('homepage.html')
+    return render_template('login.html')
 
 @app.route('/login')
 def login():
@@ -205,6 +205,7 @@ def sign_in():
     data = request.form
     email = data.get('email')
     password = data.get('password')
+    admin = data.get('admin')
 
     if not email or not password:
         #return jsonify({"error": "Username and password are required"}), 400
@@ -212,6 +213,21 @@ def sign_in():
     
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    if admin == "true":
+        print("true")
+
+        check_admin_exist_query = "SELECT * FROM admins WHERE Email = (%s)"
+        cursor.execute(check_admin_exist_query, (email))
+        admin = cursor.fetchone()
+
+        if admin is None:
+            conn.close()
+            return render_template('login.html', message = "Invalid admin account"), 400
+        
+        conn.close()
+        return render_template('homepage.html', message = "Login successful")
+
     check_user_exist_query = "SELECT * FROM users WHERE Email = (%s)"
     cursor.execute(check_user_exist_query, (email))
     user = cursor.fetchone()
@@ -234,7 +250,7 @@ def sign_in():
     session['name'] = f"{user[1]} {user[2]}"  # Assuming FirstName and LastName are second and third columns
 
     conn.close()
-    return render_template('homepage.html', message="Login successful")
+    return redirect(url_for('homepage.html'))
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -388,6 +404,17 @@ def add_listing(user_id):
         # change the name to whatever .html file it should be
         return render_template('add_listing.html', message = "Listing already exists"), 400
     
+    check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
+    cursor.execute(check_user_exist_query, (str(user_id)))
+    user = cursor.fetchone()
+
+    if user is None:
+        conn.close()
+        # change the name to whatever .html file it should be
+        return render_template('add_listing.html', message = "User not found"), 400
+    
+    owner_name = user[1] + " " + user[2]
+
     check_num_listing_query = "SELECT ListingID FROM listings"
     cursor.execute(check_num_listing_query)
     listing = cursor.fetchall()
@@ -403,8 +430,67 @@ def add_listing(user_id):
     conn.commit()
     conn.close()
 
+    listing_info = {
+        "listing_id": listing_id,
+        "listing_owner": owner_name,
+        "property_name": property_name,
+        "listing_title": title,
+        "square_feet": sq_feet,
+        "rooms": rooms,
+        "bathrooms": bathrooms,
+        "price": price,
+        "source": source
+    }
+
     # change the name to whatever .html file it should be
-    return render_template('listings.html', message = "Listing successfully created", listing_id = listing_id)
+    return render_template('listings.html', message = "Listing successfully created", listing_id = listing_id, listings = listing_info)
+
+@app.route('/get_listings', methods = ['POST'])
+def get_listings():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    get_listings_query = "SELECT * FROM listings"
+    cursor.execute(get_listings_query)
+    listings = cursor.fetchall()
+    listings_data = []
+
+    for listing in listings:
+        listing_id = listing[0]
+        owner_id = listing[1]
+        property_id = listing[2]
+
+        get_owner_name_query = "SELECT FirstName, LastName FROM users WHERE UserID = (%s)"
+        cursor.execute(get_owner_name_query, (str(owner_id)))
+        user = cursor.fetchone()
+        owner_name = user[0] + " " + user[1]
+
+        get_property_name_query = "SELECT PropertyName FROM property WHERE PropertyID = (%s)"
+        cursor.execute(get_property_name_query, (str(property_id)))
+        property = cursor.fetchone()
+        property_name = property[0]
+
+        title = listing[7]
+        sq_feet = listing[3]
+        rooms = listing[6]
+        bathrooms = listing[8]
+        price = listing[5]
+        source = listing[4]
+
+        listing_info = {
+            "listing_id": listing_id,
+            "listing_owner": owner_name,
+            "property_name": property_name,
+            "listing_title": title,
+            "square_feet": sq_feet,
+            "rooms": rooms,
+            "bathrooms": bathrooms,
+            "price": price,
+            "source": source
+        }
+
+        listings_data.append(listing_info)
+
+    return render_template('listings.html', listings = listings_data)
 
 @app.route('/delete_listing/<int:listing_id>', methods = ['POST'])
 def delete_listing(listing_id):
