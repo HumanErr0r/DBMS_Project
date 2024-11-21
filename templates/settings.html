@@ -21,18 +21,60 @@
     <div class="form-container">
         <h2>Settings for {{ session.get('firstname') }} {{ session.get('lastname') }}</h2>
         <form action="{{ url_for('update_user', user_id=session.get('user_id')) }}" method="POST">
-            <label for="firstname">New First Name:</label>
-            <input type="text" id="firstname" name="firstname" value="{{ session.get('firstname', '') }}" required>
-
-            <label for="lastname">New Last Name:</label>
-            <input type="text" id="lastname" name="lastname" value="{{ session.get('lastname', '') }}" required>
-
-            <label for="email">New Email:</label>
-            <input type="email" id="email" name="email" value="{{ session.get('email', '') }}" required>
-
-            <!-- The form will send to /update_user/[user_id] automatically -->
-            <button type="submit">Update Settings</button>
+            <div class="settings-grid">
+                <!-- Current Info Column -->
+                <div class="current-info">
+                    <h3>Current Information</h3>
+                    <div class="info-row">
+                        <label>First Name:</label>
+                        <span>{{ user[1] }}</span>
+                    </div>
+                    <div class="info-row">
+                        <label>Last Name:</label>
+                        <span>{{ user[2] }}</span>
+                    </div>
+                    <div class="info-row">
+                        <label>Email:</label>
+                        <span>{{ user[3] }}</span>
+                    </div>
+                    <div class="info-row">
+                        <label>Phone:</label>
+                        <span>{{ user[4] }}</span>
+                    </div>
+                    <div class="info-row">
+                        <label>Gender:</label>
+                        <span>{{ user[6] }}</span>
+                    </div>
+                </div>
+    
+                <!-- New Info Column -->
+                <div class="new-info">
+                    <h3>Update Information</h3>
+                    <div class="info-row">
+                        <label for="firstname">New First Name:</label>
+                        <input type="text" id="firstname" name="firstname" value="{{ user[1] }}" required>
+                    </div>
+                    <div class="info-row">
+                        <label for="lastname">New Last Name:</label>
+                        <input type="text" id="lastname" name="lastname" value="{{ user[2] }}" required>
+                    </div>
+                    <div class="info-row">
+                        <label for="email">New Email:</label>
+                        <input type="email" id="email" name="email" value="{{ user[3] }}" required>
+                    </div>
+                    <div class="info-row">
+                        <label for="phone">New Phone:</label>
+                        <input type="phone" id="phone" name="phone" value="{{ user[4] }}" required>
+                    </div>
+                    <div class="info-row">
+                        <label for="gender">New Gender:</label>
+                        <input type="gender" id="gender" name="gender" value="{{ user[6] }}" required>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="update-button">Update Settings</button>
         </form>
+    </div>
 
         <!-- Example of showing user info -->
         <div class="user-info">
