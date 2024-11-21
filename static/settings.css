@@ -49,3 +49,45 @@ header {
     width: 100px;
     height: auto;
 }
+
+/* Taskbar styling */
+nav.taskbar {
+    background-color: #630031;
+    text-align: center;
+    padding: 0px 0;
+}
+
+nav.taskbar ul {
+    list-style: none;
+}
+
+nav.taskbar ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav.taskbar ul li button {
+    color: white;
+    background-color: #630031;
+    border: none;
+    font-size: 18px;
+    height: 50px;
+    padding: 0px 20px;
+    cursor: pointer;
+    user-select: none;
+}
+
+nav.taskbar ul li button:hover {
+    background-color: #E87722;
+}
+
+/* Section styling */
+.section {
+    display: none;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+section h2 {
+    margin-bottom: 10px;
+}

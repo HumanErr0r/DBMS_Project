@@ -18,6 +18,16 @@
         </form>
     </header>
 
+    <nav class="taskbar">
+        <ul>
+            <li><a href="{{ url_for('listingsearch')}}"><button>Search for Listings</button></a></li>
+            <li><a href="{{ url_for('roommatesearch')}}"><button>Search for Roommates</button></a></li>
+            <li><a href="{{ url_for('listings')}}"><button>Manage Your Listings</button></a></li>
+            <li><a href="{{ url_for('preferences')}}"><button>Update Preferences</button></a></li>
+            <li><a href="{{ url_for('settings')}}"><button>Settings</button></a></li>
+        </ul>
+    </nav>
+
     <div class="form-container">
         <h2>Settings for {{ session.get('firstname') }} {{ session.get('lastname') }}</h2>
         <form action="{{ url_for('update_user', user_id=session.get('user_id')) }}" method="POST">
@@ -46,7 +56,7 @@
                         <span>{{ user[6] }}</span>
                     </div>
                 </div>
-    
+
                 <!-- New Info Column -->
                 <div class="new-info">
                     <h3>Update Information</h3>
@@ -76,11 +86,11 @@
         </form>
     </div>
 
-        <!-- Example of showing user info -->
-        <div class="user-info">
-            <p>Logged in as: {{ session.get('email', 'Not logged in') }}</p>
-            <p>User ID: {{ session.get('user_id', 'Unknown') }}</p>
-        </div>
+    <!-- Example of showing user info -->
+    <div class="user-info">
+        <p>Logged in as: {{ session.get('email', 'Not logged in') }}</p>
+        <p>User ID: {{ session.get('user_id', 'Unknown') }}</p>
+    </div>
 
     </div>
 

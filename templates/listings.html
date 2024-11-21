@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Listings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='homepage.css') }}" />
+</head>
+
+<body>
+    <header>
+        <a href="{{ url_for('homepage')}}">
+            <img src="{{url_for('static', filename='logo.png')}}" class="logo" />
+        </a>
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="logout-button">Log Out</button>
+        </form>
+    </header>
+
+    <!-- Taskbar (Navigation) -->
+    <nav class="taskbar">
+        <ul>
+            <li><a href="{{ url_for('listingsearch')}}"><button>Search for Listings</button></a></li>
+            <li><a href="{{ url_for('roommatesearch')}}"><button>Search for Roommates</button></a></li>
+            <li><a href="{{ url_for('listings')}}"><button>Manage Your Listings</button></a></li>
+            <li><a href="{{ url_for('preferences')}}"><button>Update Preferences</button></a></li>
+            <li><a href="{{ url_for('settings')}}"><button>Settings</button></a></li>
+        </ul>
+    </nav>
+
+
+</body>
+
+</html>
