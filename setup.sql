@@ -52,8 +52,8 @@ CREATE TABLE `listings` (
   `Bathrooms` int DEFAULT NULL,
   PRIMARY KEY (`ListingID`),
   UNIQUE KEY `ListingID_UNIQUE` (`ListingID`),
-  CONSTRAINT `ListingsPropertyID` FOREIGN KEY (`PropertyID`) REFERENCES `property` (`PropertyID`),
-  CONSTRAINT `OwnerID` FOREIGN KEY (`OwnerID`) REFERENCES `users` (`UserID`)
+  CONSTRAINT `ListingsPropertyID` FOREIGN KEY (`PropertyID`) REFERENCES `property` (`PropertyID`) ON DELETE CASCADE,
+  CONSTRAINT `OwnerID` FOREIGN KEY (`OwnerID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
 );
 
 -- listing interest
@@ -63,8 +63,8 @@ CREATE TABLE `listing_interest` (
   `UserID` int NOT NULL,
   PRIMARY KEY (`ListingInterestGroupID`),
   UNIQUE KEY `ListingInterestGroupID_UNIQUE` (`ListingInterestGroupID`),
-  CONSTRAINT `ListingID` FOREIGN KEY (`ListingID`) REFERENCES `listings` (`ListingID`),
-  CONSTRAINT `ListingInterestUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`)
+  CONSTRAINT `ListingID` FOREIGN KEY (`ListingID`) REFERENCES `listings` (`ListingID`) ON DELETE CASCADE,
+  CONSTRAINT `ListingInterestUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
 );
 
 -- preferences
@@ -79,7 +79,7 @@ CREATE TABLE `preferences` (
   PRIMARY KEY (`PreferenceID`),
   UNIQUE KEY `PreferenceID_UNIQUE` (`PreferenceID`),
   UNIQUE KEY `UserID_UNIQUE` (`UserID`),
-  CONSTRAINT `PreferencesUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`)
+  CONSTRAINT `PreferencesUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
 );
 
 -- reviews
@@ -92,6 +92,6 @@ CREATE TABLE `reviews` (
   `Description` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`ReviewID`),
   UNIQUE KEY `ReviewID_UNIQUE` (`ReviewID`),
-  CONSTRAINT `PropertyID` FOREIGN KEY (`PropertyID`) REFERENCES `property` (`PropertyID`),
-  CONSTRAINT `PropertyUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`)
+  CONSTRAINT `PropertyID` FOREIGN KEY (`PropertyID`) REFERENCES `property` (`PropertyID`) ON DELETE CASCADE,
+  CONSTRAINT `PropertyUserID` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
 );
