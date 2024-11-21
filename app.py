@@ -250,7 +250,7 @@ def sign_in():
     session['name'] = f"{user[1]} {user[2]}"  # Assuming FirstName and LastName are second and third columns
 
     conn.close()
-    return redirect(url_for('homepage.html'))
+    return redirect(url_for('homepage'))
 
 @app.route('/logout', methods=['POST'])
 def logout():
