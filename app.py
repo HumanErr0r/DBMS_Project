@@ -570,6 +570,75 @@ def update_listing(listing_id):
     # probably need to change the html this refers to
     return redirect(url_for('listings'))  # This will refresh the page with new data
 
+@app.route('/view_listing_info/<int:listing_id>', methods = ['POST'])
+def view_listing_info(listing_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    check_listing_exist_query = "SELECT * FROM listings WHERE ListingID = (%s)"
+    cursor.execute(check_listing_exist_query, (listing_id))
+    listing = cursor.fetchone()
+
+    if listing is None:
+        conn.close()
+        # probably need to change the html this refers to
+        return render_template('view_listing.html', message = "Listing does not exist"), 400
+
+    get_property_id_query = "SELECT PropertyID, Source FROM listings WHERE ListingID = (%s)"
+    cursor.execute(get_property_id_query, (str(listing_id)))
+    property = cursor.fetchone()
+    property_id = property[0]
+    listing_source = property[1]
+
+    get_property_info = "SELECT * FROM property WHERE PropertyID = (%s)"
+    cursor.execute(get_property_info, (str(property_id)))
+    property = cursor.fetchone()
+
+    property_name = property[1]
+    street = property[2]
+    city = property[3]
+    state = property[4]
+    zip_code = property[5]
+    property_source = property[6]
+
+    property_info = {
+        "property_name": property_name,
+        "street": street,
+        "city": city,
+        "state": state,
+        "zip_code": zip_code,
+        "property_source": property_source,
+        "listing_source": listing_source
+    }
+
+    review_data = get_review_data(property_id)
+
+    get_listing_interest_query = "SELECT UserID FROM listing_interest WHERE ListingID = (%s)"
+    cursor.execute(get_listing_interest_query, (str(listing_id)))
+    listing_interest_user = cursor.fetchall()
+
+    user_data = []
+
+    for user in listing_interest_user:
+        user_id = user[0]
+
+        get_user_contact_info = "SELECT FirstName, LastName, Email, PhoneNumber FROM users WHERE UserID = (%s)"
+        cursor.execute(get_user_contact_info, (str(user_id)))
+        user = cursor.fetchone()
+
+        user_name = user[0] + " " + user[1]
+        email = user[2]
+        phone_number = user[3]
+
+        user_info = {
+            "user_id": user_id,
+            "user_name": user_name,
+            "email": email,
+            "phone_number": phone_number
+        }
+        user_data.append(user_info)
+    return render_template('listing_popup.html', property_info = property_info, review_info = review_data, user_info = user_data)
+
 @app.route('/add_review/<int:property_id>/<int:user_id>', methods = ['POST'])
 def add_review(property_id, user_id):
     data = request.form
@@ -644,6 +713,7 @@ def get_review_data(property_id):
     }
 
     for i in range(len(reviews)):
+        review_id = reviews[i][0]
         user_id = reviews[i][2]
         rating = reviews[i][3]
         date = reviews[i][4].strftime('%Y-%m-%d')
@@ -655,6 +725,7 @@ def get_review_data(property_id):
         name = user_name[0][0] + " " + user_name[0][1]
 
         reivew_dict = {
+            "review_id": review_id,
             "user_id": user_id,
             "user_name": name,
             "date": date,
