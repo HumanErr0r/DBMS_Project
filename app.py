@@ -69,18 +69,7 @@ def roommatesearch():
 def listings():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
-    user_id = session['user_id']
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # Get all listings for this user
-    get_listings_query = "SELECT * FROM listings WHERE OwnerID = %s"
-    cursor.execute(get_listings_query, (user_id,))
-    listings = cursor.fetchall()
-
-    conn.close()
-    return render_template('listings.html', listings=listings)
+    return manage_your_listings()
 
 @app.route('/preferences')
 def preferences():
@@ -397,7 +386,7 @@ def update_property(property_id):
 def add_listing(user_id):
     data = request.form
     property_name = data.get('propertyname')
-    sq_feet = data.get('squarefeet')
+    sq_feet = data.get('sq_feet')
     source = data.get('source')
     price = data.get('price')
     rooms = data.get('rooms')
@@ -418,7 +407,7 @@ def add_listing(user_id):
     if property_id is None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('add_listing.html', message = "Property does not exist"), 400 
+        return render_template('listings.html', message = "Property does not exist"), 400 
     
     property_id = property_id[0]
 
@@ -431,7 +420,7 @@ def add_listing(user_id):
     if listing is not None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('add_listing.html', message = "Listing already exists"), 400
+        return render_template('listings.html', message = "Listing already exists"), 400
     
     check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
     cursor.execute(check_user_exist_query, (str(user_id)))
@@ -440,7 +429,7 @@ def add_listing(user_id):
     if user is None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('add_listing.html', message = "User not found"), 400
+        return render_template('listings.html', message = "User not found"), 400
     
     owner_name = user[1] + " " + user[2]
 
@@ -458,21 +447,9 @@ def add_listing(user_id):
     cursor.execute(insert_query, (str(listing_id), str(user_id), str(property_id), sq_feet, source, price, rooms, title, bathrooms))
     conn.commit()
     conn.close()
-
-    listing_info = {
-        "listing_id": listing_id,
-        "listing_owner": owner_name,
-        "property_name": property_name,
-        "listing_title": title,
-        "square_feet": sq_feet,
-        "rooms": rooms,
-        "bathrooms": bathrooms,
-        "price": price,
-        "source": source
-    }
-
+    
     # change the name to whatever .html file it should be
-    return render_template('listings.html', message = "Listing successfully created", listing_id = listing_id, listings = listing_info)
+    return manage_your_listings()
 
 @app.route('/get_listings', methods = ['POST'])
 def get_listings():
@@ -541,7 +518,7 @@ def delete_listing(listing_id):
     conn.close()
 
     # probably need to change the html this refers to
-    return render_template('homepage.html', message = "Listing successfully deleted")
+    return manage_your_listings()
 
 @app.route('/update_listing/<int:listing_id>', methods = ['POST'])
 def update_listing(listing_id):
@@ -661,7 +638,7 @@ def manage_your_listings():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    get_listings_query = "SELECT * FROM listings WHERE UserID = (%s)"
+    get_listings_query = "SELECT * FROM listings WHERE OwnerID = (%s)"
     cursor.execute(get_listings_query, str(user_id))
     listings = cursor.fetchall()
 
