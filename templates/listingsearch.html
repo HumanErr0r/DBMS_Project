@@ -59,6 +59,86 @@
         </form>
     </div>
 
+    <h1>Listing Search Results</h1>
+
+    {% if listings %}
+    <div class="listings-list">
+        <table class="listing-table">
+            <thead>
+                <tr>
+                    <th>Listing</th>
+                    <th>Price</th>
+                    <th>Square Feet</th>
+                    <th>Rooms</th>
+                    <th>Bathrooms</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for listing in listings %}
+                <tr class="listing-row" onclick="openModal('{{ listing.listing_id }}')">
+                    <td>{{ listing.title }}</td>
+                    <td>{{ listing.price }}</td>
+                    <td>{{ listing.sq_feet }}</td>
+                    <td>{{ listing.rooms }}</td>
+                    <td>${{ listing.bathrooms }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modals for each listing -->
+    {% for listing in listings %}
+    <div id="modal-{{ listing.listing_id }}" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('{{ listing.listing_id }}')">&times;</span>
+            <h2>{{ listing.name }}</h2>
+            <table class="modal-table">
+                <tr>
+                    <td><strong>Listing ID:</strong></td>
+                    <td>{{ listing.listing_id }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Name:</strong></td>
+                    <td>{{ listing.owner_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Property:</strong></td>
+                    <td>{{ listing.property_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Title:</strong></td>
+                    <td>{{ listing.title }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Square Feet:</strong></td>
+                    <td>{{ listing.sq_feet }} sq ft</td>
+                </tr>
+                <tr>
+                    <td><strong>Rooms:</strong></td>
+                    <td>{{ listing.rooms }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Bathrooms:</strong></td>
+                    <td>{{ listing.bathrooms }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Price:</strong></td>
+                    <td>${{ listing.price }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Source:</strong></td>
+                    <td>{{ listing.source }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <p>No listings found that match your criteria.</p>
+    {% endif %}
+    <script src="{{url_for('static', filename='modal.js')}}"></script>
 </body>
 
 </html>

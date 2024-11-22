@@ -503,10 +503,10 @@ def get_listings():
 
         listing_info = {
             "listing_id": listing_id,
-            "listing_owner": owner_name,
+            "owner_name": owner_name,
             "property_name": property_name,
-            "listing_title": title,
-            "square_feet": sq_feet,
+            "title": title,
+            "sq_feet": sq_feet,
             "rooms": rooms,
             "bathrooms": bathrooms,
             "price": price,
