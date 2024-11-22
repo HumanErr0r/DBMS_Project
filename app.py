@@ -1060,7 +1060,8 @@ def roommate_search():
         
     cursor.close()
     conn.close()
-    return render_template('roommatesearch.html', roommates = roommate_data)
+    return render_template('roommatesearch.html', roommates = roommate_data, zipcode=filter_zipcode, budget=filter_budget, 
+                               rooms=filter_rooms, leaseduration=filter_lease_duration)
 
 if __name__ == '__main__': 
     app.run(debug = True)
