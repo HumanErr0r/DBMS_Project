@@ -28,7 +28,7 @@ def get_db_connection():
 def start():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('login.html')
+    return render_template('homepage.html')
 
 @app.route('/login')
 def login():
@@ -56,6 +56,22 @@ def homepage():
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
+@app.route('/listingsearch')
+def listingsearch():
+    return render_template('listingsearch.html')
+
+@app.route('/roommatesearch')
+def roommatesearch():
+    return render_template('roommatesearch.html')
+
+@app.route('/listings')
+def listings():
+    return render_template('listings.html')
+
+@app.route('/preferences')
+def preferences():
+    return render_template('preferences.html')
 
 @app.route('/settings')
 def settings():
