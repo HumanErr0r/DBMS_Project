@@ -1026,8 +1026,27 @@ def roommate_search():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    get_preferences_query = "SELECT * FROM preferences"
-    cursor.execute(get_preferences_query)
+    filter_zipcode = request.form.get('zipcode')
+    filter_budget = request.form.get('budget')
+    filter_rooms = request.form.get('rooms')
+    filter_lease_duration = request.form.get('lease_duration')
+
+    get_preferences_query = "SELECT * FROM preferences WHERE 1=1"
+    params = []
+    if filter_zipcode:
+        get_preferences_query += " AND zip_code = %s"
+        params.append(filter_zipcode)
+    if filter_budget:
+        get_preferences_query += " AND budget <= %s"
+        params.append(filter_budget)
+    if filter_rooms:
+        get_preferences_query += " AND rooms = %s"
+        params.append(filter_rooms)
+    if filter_lease_duration:
+        get_preferences_query += " AND lease_duration = %s"
+        params.append(filter_lease_duration)
+
+    cursor.execute(get_preferences_query, tuple(params))
     preferences = cursor.fetchall()
 
     roommate_data = []
@@ -1039,9 +1058,9 @@ def roommate_search():
         user = cursor.fetchone()
 
         user_name = user[0] + " " + user[1]
-        email = user[2],
-        phone = user[3],
-        gender = user[4],
+        email = user[2]
+        phone = user[3]
+        gender = user[4]
         zip_code = preference[2]
         budget = preference[3]
         rooms = preference[4]
@@ -1061,6 +1080,9 @@ def roommate_search():
         }
 
         roommate_data.append(roommate_info)
+        
+    cursor.close()
+    conn.close()
     return render_template('roommatesearch.html', roommates = roommate_data)
 
 if __name__ == '__main__': 

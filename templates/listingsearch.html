@@ -34,11 +34,9 @@
     </nav>
 
     <div class="query">
-        <form action="/roommate_search" method="POST">
-            <span>Budget:</span>
-            <input type="number" id="budget1" name="budget1" min="0">
-            <span>-</span>
-            <input type="number" id="budget2" name="budget2" min="0">
+        <form action="/get_listings" method="POST">
+            <span>Maximum Budget:</span>
+            <input type="number" id="budget" name="budget" min="0">
             <span>Rooms:</span>
             <select id="rooms" name="rooms">
                 <option value="" disabled selected> </option>

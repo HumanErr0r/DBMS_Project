@@ -35,10 +35,8 @@
 
     <div class="query">
         <form action="/roommate_search" method="POST">
-            <span>Budget:</span>
-            <input type="number" id="budget1" name="budget1" min="0">
-            <span>-</span>
-            <input type="number" id="budget2" name="budget2" min="0">
+            <span>Maximum Budget:</span>
+            <input type="number" id="budget" name="budget" min="0">
             <span>Rooms:</span>
             <select id="rooms" name="rooms">
                 <option value="" disabled selected> </option>
@@ -62,6 +60,30 @@
             <button type="submit" class="searchbutton">Search</button>
         </form>
     </div>
+
+    <h1>Roommate Search Results</h1>
+
+    <!-- Check if there are any roommates to display -->
+    {% if roommates %}
+    <div class="roommates-list">
+        <!-- Loop through each roommate in the roommates data -->
+        {% for roommate in roommates %}
+        <div class="roommate-card">
+            <h2>{{ roommate.name }}</h2>
+            <p><strong>Email:</strong> {{ roommate.email }}</p>
+            <p><strong>Phone:</strong> {{ roommate.phone }}</p>
+            <p><strong>Gender:</strong> {{ roommate.gender }}</p>
+            <p><strong>Zip Code:</strong> {{ roommate.zip_code }}</p>
+            <p><strong>Budget:</strong> ${{ roommate.budget }}</p>
+            <p><strong>Rooms Needed:</strong> {{ roommate.rooms }}</p>
+            <p><strong>Property Type:</strong> {{ roommate.property_type }}</p>
+            <p><strong>Lease Duration:</strong> {{ roommate.lease_duration }} semesters</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No roommates found that match your criteria.</p>
+    {% endif %}
 
 </body>
 
