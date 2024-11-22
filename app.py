@@ -198,16 +198,16 @@ def update_user(user_id):
     if 'email' in data:
         update_query = "UPDATE users SET Email = (%s) WHERE UserID = (%s)"
         cursor.execute(update_query, (data.get('email'), user_id))
-    # if 'phone' in data:
-    #     update_query = "UPDATE users SET Phone = (%s) WHERE UserID = (%s)"
-    #     cursor.execute(update_query, (data.get('phone'), user_id))
-    # if 'gender' in data:
-    #     update_query = "UPDATE users SET Gender = (%s) WHERE UserID = (%s)"
-    #     cursor.execute(update_query, (data.get('gender'), user_id))
-    # if 'password' in data:
-    #     hashed_password = bcrypt.hashpw(data.get('password').encode('utf-8'), bcrypt.gensalt())
-    #     update_query = "UPDATE users SET Password = (%s) WHERE UserID = (%s)"
-    #     cursor.execute(update_query, (hashed_password, user_id))
+    if 'phone' in data:
+         update_query = "UPDATE users SET PhoneNumber = (%s) WHERE UserID = (%s)"
+         cursor.execute(update_query, (data.get('phone'), user_id))
+    if 'gender' in data:
+         update_query = "UPDATE users SET Gender = (%s) WHERE UserID = (%s)"
+         cursor.execute(update_query, (data.get('gender'), user_id))
+    if 'password' in data:
+         hashed_password = bcrypt.hashpw(data.get('password').encode('utf-8'), bcrypt.gensalt())
+         update_query = "UPDATE users SET Password = (%s) WHERE UserID = (%s)"
+         cursor.execute(update_query, (hashed_password, user_id))
     
     # possibly add a check to make sure the new password is confirmed
     conn.commit()
@@ -955,5 +955,48 @@ def delete_listing_interest(listing_interest_id):
     # probably need to change the html this refers to
     return render_template('listing_interest.html', message = "Listing interest successfully deleted")
 
-if __name__ == '__main__':  
+@app.route('/roommatesearch', methods = ['POST'])
+def roommate_search():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    get_preferences_query = "SELECT * FROM preferences"
+    cursor.execute(get_preferences_query)
+    preferences = cursor.fetchall()
+
+    roommate_data = []
+
+    for preference in preferences:
+        user_id = preference[1]
+        get_user_name_query = "SELECT FirstName, LastName, Email, PhoneNumber, Gender FROM users WHERE UserID = (%s)"
+        cursor.execute(get_user_name_query, (str(user_id)))
+        user = cursor.fetchone()
+
+        user_name = user[0] + " " + user[1]
+        email = user[2],
+        phone = user[3],
+        gender = user[4],
+        zip_code = preference[2]
+        budget = preference[3]
+        rooms = preference[4]
+        property_type = preference[5]
+        lease_duration = preference[6]
+
+        roommate_info = {
+            "name": user_name,
+            "email": email,
+            "phone": phone,
+            "gender": gender,
+            "zip_code": zip_code,
+            "budget": budget,
+            "rooms": rooms,
+            "property_type": property_type,
+            "lease_duration": lease_duration
+        }
+
+        roommate_data.append(roommate_info)
+
+    return render_template('roommatesearch.html', roommates = roommate_data)
+
+if __name__ == '__main__': 
     app.run(debug = True)
