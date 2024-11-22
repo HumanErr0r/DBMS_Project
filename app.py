@@ -955,7 +955,7 @@ def delete_listing_interest(listing_interest_id):
     # probably need to change the html this refers to
     return render_template('listing_interest.html', message = "Listing interest successfully deleted")
 
-@app.route('/roommatesearch', methods = ['POST'])
+@app.route('/roommate_search', methods = ['POST'])
 def roommate_search():
     conn = get_db_connection()
     cursor = conn.cursor()
