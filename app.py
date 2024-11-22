@@ -387,7 +387,7 @@ def add_listing(user_id):
     sq_feet = data.get('squarefeet')
     source = data.get('source')
     price = data.get('price')
-    rooms = data.get('zipcode')
+    rooms = data.get('rooms')
     title = data.get('title')
     bathrooms = data.get('bathrooms')
 
@@ -638,6 +638,59 @@ def view_listing_info(listing_id):
         }
         user_data.append(user_info)
     return render_template('listing_popup.html', property_info = property_info, review_info = review_data, user_info = user_data)
+
+@app.route('/listings', methods = ['POST'])
+def manage_your_listings():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    get_listings_query = "SELECT * FROM listings WHERE UserID = (%s)"
+    cursor.execute(get_listings_query, str(user_id))
+    listings = cursor.fetchall()
+
+    listings_data = []
+
+    for listing in listings:
+        listing_id = listing[0]
+        owner_id = listing[1]
+        property_id = listing[2]
+
+        get_owner_name_query = "SELECT FirstName, LastName FROM users WHERE UserID = (%s)"
+        cursor.execute(get_owner_name_query, (str(owner_id)))
+        user = cursor.fetchone()
+        owner_name = user[0] + " " + user[1]
+
+        get_property_name_query = "SELECT PropertyName FROM property WHERE PropertyID = (%s)"
+        cursor.execute(get_property_name_query, (str(property_id)))
+        property = cursor.fetchone()
+        property_name = property[0]
+
+        title = listing[7]
+        sq_feet = listing[3]
+        rooms = listing[6]
+        bathrooms = listing[8]
+        price = listing[5]
+        source = listing[4]
+
+        listing_info = {
+            "listing_id": listing_id,
+            "listing_owner": owner_name,
+            "property_name": property_name,
+            "listing_title": title,
+            "square_feet": sq_feet,
+            "rooms": rooms,
+            "bathrooms": bathrooms,
+            "price": price,
+            "source": source
+        }
+
+        listings_data.append(listing_info)
+
+    return render_template('listings.html', listings = listings_data)
 
 @app.route('/add_review/<int:property_id>/<int:user_id>', methods = ['POST'])
 def add_review(property_id, user_id):
@@ -995,7 +1048,6 @@ def roommate_search():
         }
 
         roommate_data.append(roommate_info)
-
     return render_template('roommatesearch.html', roommates = roommate_data)
 
 if __name__ == '__main__': 
