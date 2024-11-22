@@ -66,6 +66,74 @@
                 <button type="submit">Add Property</button>
             </form>
         </section>
+
+        <!-- Add Property Form -->
+        <section class="add-listing">
+            <h2>Add New Listing</h2>
+            <form action="{{ url_for('add_listing', user_id=session.get('user_id')) }}" method="POST">
+                <div class="form-group">
+                    <label for="propertyname">Property Name:</label>
+                    <input type="text" id="propertyname" name="propertyname" required>
+                </div>
+                <div class="form-group">
+                    <label for="sq_feet">Square Feet:</label>
+                    <input type="text" id="sq_feet" name="sq_feet" required>
+                </div>
+                <div class="form-group">
+                    <label for="source">Source:</label>
+                    <input type="text" id="source" name="source" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">State:</label>
+                    <input type="text" id="price" name="price" required>
+                </div>
+                <div class="form-group">
+                    <label for="rooms">Rooms:</label>
+                    <input type="text" id="rooms" name="rooms" required>
+                </div>
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="bathrooms">Bathrooms:</label>
+                    <input type="text" id="bathrooms" name="bathrooms" required>
+                </div>
+                <button type="submit">Add Property</button>
+            </form>
+        </section>
+
+        <!-- Add Property Form -->
+        <section class="edit-listing">
+            <h2>Edit Your Listings</h2>
+            <form action="{{ url_for('add_property') }}" method="POST">
+                <div class="form-group">
+                    <label for="propertyname">Property Name:</label>
+                    <input type="text" id="propertyname" name="propertyname" required>
+                </div>
+                <div class="form-group">
+                    <label for="street">Street:</label>
+                    <input type="text" id="street" name="street" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div class="form-group">
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" required>
+                </div>
+                <div class="form-group">
+                    <label for="zipcode">Zip Code:</label>
+                    <input type="text" id="zipcode" name="zipcode" required>
+                </div>
+                <div class="form-group">
+                    <label for="source">Source:</label>
+                    <input type="text" id="source" name="source" required>
+                </div>
+                <button type="submit">Add Property</button>
+            </form>
+        </section>
     </main>
 </body>
 
