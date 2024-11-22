@@ -393,7 +393,7 @@ def add_listing(user_id):
 
     if not all ([property_name, sq_feet, source, price, rooms, title, bathrooms]):
         # change the name to whatever .html file it should be
-        return render_template('add_listing.html', message = "All fields are required"), 400
+        return render_template('listings.html', message = "All fields are required"), 400
     
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -405,7 +405,7 @@ def add_listing(user_id):
     if property_id is None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('add_listing.html', message = "Property does not exist"), 400 
+        return render_template('listings.html', message = "Property does not exist"), 400 
     
     property_id = property_id[0]
 
@@ -418,7 +418,7 @@ def add_listing(user_id):
     if listing is not None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('add_listing.html', message = "Listing already exists"), 400
+        return render_template('listings.html', message = "Listing already exists"), 400
     
     check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
     cursor.execute(check_user_exist_query, (str(user_id)))
@@ -427,7 +427,7 @@ def add_listing(user_id):
     if user is None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('add_listing.html', message = "User not found"), 400
+        return render_template('listings.html', message = "User not found"), 400
     
     owner_name = user[1] + " " + user[2]
 
