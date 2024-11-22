@@ -92,6 +92,12 @@
                             <option value="other" {% if user[6]=='other' %}selected{% endif %}>other</option>
                         </select>
                     </div>
+                    <div class="info-row">
+                        <label for="password">New Password:</label>
+                        <input type="password" id="password" name="password" 
+                               pattern="[A-Za-z0-9!@#$%^&*()_+]{8,}" 
+                               title="Password must be at least 8 characters">
+                    </div>
                 </div>
             </div>
             <button type="submit" class="update-button">Update Settings</button>
