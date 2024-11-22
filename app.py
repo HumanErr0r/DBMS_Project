@@ -243,8 +243,21 @@ def sign_in():
             conn.close()
             return render_template('login.html', message = "Invalid admin account"), 400
         
+        admin_password = str(admin[5])
+
+        if not(bcrypt.checkpw(password.encode('utf-8'), admin_password.encode('utf-8'))):
+            conn.close()
+            return render_template('login.html', message = "Incorrect password"), 400
+        
+        session['admin_id'] = admin[0]
+
+        # once created render template will return the admin page
+        # the admin page will have a create account option and a generate report option
+        # the report will detail the number of listings and users there are (or something else thats similar)
+        
         conn.close()
         return render_template('homepage.html', message = "Login successful")
+    
 
     check_user_exist_query = "SELECT * FROM users WHERE Email = (%s)"
     cursor.execute(check_user_exist_query, (email))
@@ -277,6 +290,40 @@ def logout():
     resp.set_cookie('session', '', expires=datetime(2000, 1, 1))
     session.clear()  # Clear the Flask session data
     return resp
+
+@app.route('/generate_reports', methods = ['POST'])
+def generate_reports():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    get_report_1_query = """SELECT p.PropertyName, AVG(l.Price) FROM listings l JOIN property p ON
+	                      l.PropertyID = p.PropertyID GROUP BY p.PropertyName"""
+    cursor.execute(get_report_1_query)
+    report_1 = cursor.fetchall()
+    report_1_data = []
+
+    for report in report_1:
+        report_1_info = {
+            "property_name": report[0],
+            "avg_price": float(report[1])
+        }
+
+        report_1_data.append(report_1_info)
+
+
+    get_report_2_query = """SELECT p.PropertyName, count(*) FROM listings l JOIN property p ON 
+                          l.PropertyID = p.PropertyID GROUP BY p.PropertyName"""
+    cursor.execute(get_report_2_query)
+    report_2 = cursor.fetchall()
+    report_2_data = []
+
+    for report in report_2:
+        report_2_info = {
+            "property_name": report[0],
+            "num_listings": float(report[1])
+        }
+
+        report_2_data.append(report_2_info)
+    return render_template('report.html', report_1 = report_1_data, report_2 = report_2_data)
 
 @app.route('/add_property', methods = ['POST'])
 def add_property():
@@ -893,7 +940,7 @@ def add_preferences(user_id):
     conn.close()
 
     # probably need to change the html this refers to
-    return render_template('add_preferences.html', message = "Account successfully created", preference_id = preference_id)
+    return render_template('preferences.html', message = "Account successfully created", preference_id = preference_id)
 
 @app.route('/delete_preferences/<int:preference_id>', methods = ['POST'])
 def delete_preferences(preference_id):
@@ -951,8 +998,7 @@ def update_preferences(preference_id):
     conn.commit()
     conn.close()
 
-    # probably need to change the html this refers to
-    return # redirect(url_for('listings'))  # This will refresh the page with new 
+    return redirect(url_for('preferences'))  # This will refresh the page with new 
 
 @app.route('/add_listing_interest/<int:listing_id>/<int:user_id>', methods = ['POST'])
 def add_listing_interest(listing_id, user_id):
@@ -1079,8 +1125,7 @@ def roommate_search():
         
     cursor.close()
     conn.close()
-    return render_template('roommatesearch.html', roommates = roommate_data, zipcode=filter_zipcode, budget=filter_budget, 
-                               rooms=filter_rooms, leaseduration=filter_lease_duration)
+    return render_template('roommatesearch.html', roommates = roommate_data)
 
 if __name__ == '__main__': 
     app.run(debug = True)
