@@ -455,8 +455,27 @@ def add_listing(user_id):
 def get_listings():
     conn = get_db_connection()
     cursor = conn.cursor()
-    get_listings_query = "SELECT * FROM listings"
-    cursor.execute(get_listings_query)
+
+    max_budget = request.form.get('budget')
+    rooms = request.form.get('rooms')
+    bathrooms = request.form.get('bathrooms')
+
+    print(max_budget, rooms, bathrooms)
+
+    filter_listings_query = "SELECT * FROM listings WHERE 1=1"
+    params = []
+
+    if max_budget:
+        filter_listings_query += " AND Price <= (%s)"
+        params.append(str(max_budget))
+    if rooms:
+        filter_listings_query += " AND Rooms = (%s)"
+        params.append(str(rooms))
+    if bathrooms:
+        filter_listings_query += " AND Bathrooms = (%s)"
+        params.append(str(bathrooms))
+
+    cursor.execute(filter_listings_query, params)
     listings = cursor.fetchall()
     listings_data = []
 
@@ -495,8 +514,8 @@ def get_listings():
         }
 
         listings_data.append(listing_info)
-
-    return render_template('listings.html', listings = listings_data)
+    conn.close()
+    return render_template('listingsearch.html', listings = listings_data)
 
 @app.route('/delete_listing/<int:listing_id>', methods = ['POST'])
 def delete_listing(listing_id):
@@ -1011,16 +1030,16 @@ def roommate_search():
     get_preferences_query = "SELECT * FROM preferences WHERE 1=1"
     params = []
     if filter_zipcode:
-        get_preferences_query += " AND zip_code = %s"
+        get_preferences_query += " AND ZipCode = %s"
         params.append(filter_zipcode)
     if filter_budget:
-        get_preferences_query += " AND budget <= %s"
+        get_preferences_query += " AND Budget <= %s"
         params.append(filter_budget)
     if filter_rooms:
-        get_preferences_query += " AND rooms = %s"
+        get_preferences_query += " AND Rooms = %s"
         params.append(filter_rooms)
     if filter_lease_duration:
-        get_preferences_query += " AND lease_duration = %s"
+        get_preferences_query += " AND LeaseDuration = %s"
         params.append(filter_lease_duration)
 
     cursor.execute(get_preferences_query, tuple(params))
