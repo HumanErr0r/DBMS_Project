@@ -67,7 +67,20 @@ def roommatesearch():
 
 @app.route('/listings')
 def listings():
-    return render_template('listings.html')
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Get all listings for this user
+    get_listings_query = "SELECT * FROM listings WHERE OwnerID = %s"
+    cursor.execute(get_listings_query, (user_id,))
+    listings = cursor.fetchall()
+
+    conn.close()
+    return render_template('listings.html', listings=listings)
 
 @app.route('/preferences')
 def preferences():
@@ -405,7 +418,7 @@ def add_listing(user_id):
     if property_id is None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('listings.html', message = "Property does not exist"), 400 
+        return render_template('add_listing.html', message = "Property does not exist"), 400 
     
     property_id = property_id[0]
 
@@ -418,7 +431,7 @@ def add_listing(user_id):
     if listing is not None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('listings.html', message = "Listing already exists"), 400
+        return render_template('add_listing.html', message = "Listing already exists"), 400
     
     check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
     cursor.execute(check_user_exist_query, (str(user_id)))
@@ -427,7 +440,7 @@ def add_listing(user_id):
     if user is None:
         conn.close()
         # change the name to whatever .html file it should be
-        return render_template('listings.html', message = "User not found"), 400
+        return render_template('add_listing.html', message = "User not found"), 400
     
     owner_name = user[1] + " " + user[2]
 
