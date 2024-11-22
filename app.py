@@ -392,7 +392,7 @@ def add_property():
     conn.close()
 
     # change the name to whatever .html file it should be
-    return render_template('listings.html', message = "Account successfully created", property_id = property_id)
+    return render_template('listings.html', message = "Property Successfully Added", property_id = property_id)
 
 @app.route('/delete_property/<int:property_id>', methods = ['POST'])
 def delete_property(property_id):
@@ -616,7 +616,7 @@ def update_listing(listing_id):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    check_listing_exist_query = "SELECT * FROM listing WHERE ListingID = (%s)"
+    check_listing_exist_query = "SELECT * FROM listings WHERE ListingID = (%s)"
     cursor.execute(check_listing_exist_query, (listing_id))
     listing = cursor.fetchone()
 
@@ -626,23 +626,23 @@ def update_listing(listing_id):
         return render_template('listings.html', message = "Listing does not exist"), 400
     
     data = request.form
-    if 'squarefeet' in data:
-        update_query = "UPDATE listing SET SquareFeet = (%s) WHERE ListingID = (%s)"
+    if 'squarefeet' in data and data.get('squarefeet').strip():  # Check if not empty
+        update_query = "UPDATE listings SET SquareFeet = (%s) WHERE ListingID = (%s)"
         cursor.execute(update_query, (data.get('squarefeet'), listing_id))
-    if 'source' in data:
-        update_query = "UPDATE listing SET Source = (%s) WHERE ListingID = (%s)"
+    if 'source' in data and data.get('source').strip():
+        update_query = "UPDATE listings SET Source = (%s) WHERE ListingID = (%s)"
         cursor.execute(update_query, (data.get('source'), listing_id))
-    if 'price' in data:
-        update_query = "UPDATE listing SET Price = (%s) WHERE ListingID = (%s)"
+    if 'price' in data and data.get('price').strip():
+        update_query = "UPDATE listings SET Price = (%s) WHERE ListingID = (%s)"
         cursor.execute(update_query, (data.get('price'), listing_id))
-    if 'rooms' in data:
-        update_query = "UPDATE listing SET Rooms = (%s) WHERE ListingID = (%s)"
+    if 'rooms' in data and data.get('rooms').strip():
+        update_query = "UPDATE listings SET Rooms = (%s) WHERE ListingID = (%s)"
         cursor.execute(update_query, (data.get('rooms'), listing_id))
-    if 'title' in data:
-        update_query = "UPDATE listing SET Title = (%s) WHERE ListingID = (%s)"
+    if 'title' in data and data.get('title').strip():
+        update_query = "UPDATE listings SET Title = (%s) WHERE ListingID = (%s)"
         cursor.execute(update_query, (data.get('title'), listing_id))
-    if 'bathrooms' in data:
-        update_query = "UPDATE listing SET Bathrooms = (%s) WHERE ListingID = (%s)"
+    if 'bathrooms' in data and data.get('bathrooms').strip():
+        update_query = "UPDATE listings SET Bathrooms = (%s) WHERE ListingID = (%s)"
         cursor.execute(update_query, (data.get('bathrooms'), listing_id))
     
     conn.commit()
@@ -653,6 +653,8 @@ def update_listing(listing_id):
 
 @app.route('/view_listing_info/<int:listing_id>', methods = ['POST'])
 def view_listing_info(listing_id):
+
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 

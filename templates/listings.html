@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Your Listings</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='homepage.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='listings.css') }}" />
 </head>
 
 <body>
@@ -43,33 +43,7 @@
 
 
 
-    <section class="current-listings">
-        <h2>Your Current Listings</h2>
-        {% if listings %}
-            <div class="listings-grid">
-                {% for listing in listings %}
-                <div class="listing-card">
-                    <h3>{{ listing.listing_title }}</h3>
-                    <p>Property: {{ listing.property_name }}</p>
-                    <p>Price: ${{ listing.price }}</p>
-                    <p>Square Feet: {{ listing.square_feet }}</p>
-                    <p>Rooms: {{ listing.rooms }}</p>
-                    <p>Bathrooms: {{ listing.bathrooms }}</p>
-                    <p>Source: {{ listing.source }}</p>
-                    <!-- Add edit and delete buttons -->
-                    <div class="listing-actions">
-                        <form action="{{ url_for('delete_listing', listing_id=listing.listing_id) }}" method="POST">
-                            <button type="submit" class="delete-btn">Delete</button>
-                        </form>
-                        <button onclick="editListing({{ listing.listing_id }})" class="edit-btn">Edit</button>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>You haven't created any listings yet.</p>
-        {% endif %}
-    </section>
+       
 
 
     <main class="property-management">
@@ -131,6 +105,10 @@
                     <input type="text" id="price" name="price" required>
                 </div>
                 <div class="form-group">
+                    <label for="price">State:</label>
+                    <input type="text" id="price" name="price" required>
+                </div>
+                <div class="form-group">
                     <label for="rooms">Rooms:</label>
                     <input type="text" id="rooms" name="rooms" required>
                 </div>
@@ -146,37 +124,63 @@
             </form>
         </section>
 
-        <!-- Add Property Form -->
-        <section class="edit-listing">
-            <h2>Edit Your Listings</h2>
-            <form action="{{ url_for('add_property') }}" method="POST">
-                <div class="form-group">
-                    <label for="propertyname">Property Name:</label>
-                    <input type="text" id="propertyname" name="propertyname" required>
+
+
+        <section class="current-listings">
+            <h2>Your Current Listings</h2>
+            {% if listings %}
+                <div class="listings-grid">
+                    {% for listing in listings %}
+                    <div class="listing-card">
+                        <h3>{{ listing.listing_title }}</h3>
+                        <p>Property: {{ listing.property_name }}</p>
+                        <p>Price: ${{ listing.price }}</p>
+                        <p>Square Feet: {{ listing.square_feet }}</p>
+                        <p>Rooms: {{ listing.rooms }}</p>
+                        <p>Bathrooms: {{ listing.bathrooms }}</p>
+                        <p>Source: {{ listing.source }}</p>
+                        <!-- Add edit and delete buttons -->
+                        <div class="listing-actions">
+                            <form action="{{ url_for('delete_listing', listing_id=listing.listing_id) }}" method="POST">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                            <form action="{{ url_for('update_listing', listing_id=listing.listing_id) }}" method="POST" class="update-form">
+                                <h4>Update Listing Information</h4>
+                                <div class="form-row">
+                                    <label for="title">Title:</label>
+                                    <input type="text" id="title" name="title" placeholder="Current: {{ listing[7] }}">
+                                </div>
+                                <div class="form-row">
+                                    <label for="squarefeet">Square Feet:</label>
+                                    <input type="text" id="squarefeet" name="squarefeet" placeholder="Current: {{ listing[3] }}">
+                                </div>
+                                <div class="form-row">
+                                    <label for="source">Source:</label>
+                                    <input type="text" id="source" name="source" placeholder="Current: {{ listing[4] }}">
+                                </div>
+                                <div class="form-row">
+                                    <label for="price">Price:</label>
+                                    <input type="text" id="price" name="price" placeholder="Current: {{ listing[5] }}">
+                                </div>
+                                <div class="form-row">
+                                    <label for="rooms">Rooms:</label>
+                                    <input type="text" id="rooms" name="rooms" placeholder="Current: {{ listing[6] }}">
+                                </div>
+                                <div class="form-row">
+                                    <label for="bathrooms">Bathrooms:</label>
+                                    <input type="text" id="bathrooms" name="bathrooms" placeholder="Current: {{ listing[8] }}">
+                                </div>
+                                <button type="submit" class="update-btn">Update Listing</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-                <div class="form-group">
-                    <label for="street">Street:</label>
-                    <input type="text" id="street" name="street" required>
-                </div>
-                <div class="form-group">
-                    <label for="city">City:</label>
-                    <input type="text" id="city" name="city" required>
-                </div>
-                <div class="form-group">
-                    <label for="state">State:</label>
-                    <input type="text" id="state" name="state" required>
-                </div>
-                <div class="form-group">
-                    <label for="zipcode">Zip Code:</label>
-                    <input type="text" id="zipcode" name="zipcode" required>
-                </div>
-                <div class="form-group">
-                    <label for="source">Source:</label>
-                    <input type="text" id="source" name="source" required>
-                </div>
-                <button type="submit">Add Property</button>
-            </form>
+            {% else %}
+                <p>You haven't created any listings yet.</p>
+            {% endif %}
         </section>
+
     </main>
 </body>
 
