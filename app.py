@@ -95,6 +95,12 @@ def settings():
 
     return render_template('settings.html', user=user)  # Pass user to template
 
+@app.route('/admin_settings')
+def admin_settings():
+    if 'admin_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin_settings.html')
+
 @app.route('/add_user', methods = ['POST'])
 def add_user():
     data = request.form
@@ -191,7 +197,6 @@ def update_user(user_id):
     
     data = request.form
     if 'firstname' in data:
-        print("Form data received:", request.form)
         update_query = "UPDATE users SET FirstName = (%s) WHERE UserID = (%s)"
         cursor.execute(update_query, (data.get('firstname'), user_id))
     if 'lastname' in data:
@@ -290,6 +295,24 @@ def logout():
     resp.set_cookie('session', '', expires=datetime(2000, 1, 1))
     session.clear()  # Clear the Flask session data
     return resp
+
+@app.route('/update_admin', methods = ['POST'])
+def update_admin():
+    if 'admin_id' not in session:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    admin_id = session['admin_id']
+
+    data = request.form
+    if 'password' in data:
+        hashed_password = bcrypt.hashpw(data.get('password').encode('utf-8'), bcrypt.gensalt())
+        update_query = "UPDATE admins SET Password = (%s) WHERE AdminID = (%s)"
+        cursor.execute(update_query, (hashed_password, str(admin_id)))
+    
+    return redirect(url_for('admin_settings'))
 
 @app.route('/generate_reports', methods = ['POST'])
 def generate_reports():
