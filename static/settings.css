@@ -35,7 +35,9 @@ h3 {
 
 .update-button {
     margin-top: 1rem;
-    width: 100%;
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
 }
 
 header {
@@ -96,4 +98,12 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
+}
+
+.delete-button {
+    margin-top: 1rem;
+    width: 30%;
+    margin-left: 35%;
+    margin-right: 35%;
+    margin-bottom: 3%;
 }

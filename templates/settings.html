@@ -62,11 +62,13 @@
                     <h3>Update Information</h3>
                     <div class="info-row">
                         <label for="firstname">New First Name:</label>
-                        <input type="text" id="firstname" name="firstname" value="{{ user[1] }}" required>
+                        <input type="text" id="firstname" name="firstname" value="{{ user[1] }}"
+                            pattern="[A-Za-z0-9_-]{1,40}" required>
                     </div>
                     <div class="info-row">
                         <label for="lastname">New Last Name:</label>
-                        <input type="text" id="lastname" name="lastname" value="{{ user[2] }}" required>
+                        <input type="text" id="lastname" name="lastname" value="{{ user[2] }}"
+                            pattern="[A-Za-z0-9_-]{1,40}" required>
                     </div>
                     <div class="info-row">
                         <label for="email">New Email:</label>
@@ -74,11 +76,17 @@
                     </div>
                     <div class="info-row">
                         <label for="phone">New Phone:</label>
-                        <input type="phone" id="phone" name="phone" value="{{ user[4] }}" required>
+                        <input type="tel" id="phone" name="phone" value="{{ user[4] }}"
+                            pattern="^\+?[0-9]{1,4}[-\s]?[0-9]{1,4}[-\s]?[0-9]{1,4}[-\s]?[0-9]{1,4}$" required
+                            title="Phone number should be between 10-15 digits long, optionally with spaces or dashes, and may start with a '+'.">
                     </div>
                     <div class="info-row">
                         <label for="gender">New Gender:</label>
-                        <input type="gender" id="gender" name="gender" value="{{ user[6] }}" required>
+                        <select id="gender" name="gender" required>
+                            <option value="male" {% if user[6]=='male' %}selected{% endif %}>male</option>
+                            <option value="female" {% if user[6]=='female' %}selected{% endif %}>female</option>
+                            <option value="other" {% if user[6]=='other' %}selected{% endif %}>other</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -86,11 +94,6 @@
         </form>
     </div>
 
-    <!-- Example of showing user info -->
-    <div class="user-info">
-        <p>Logged in as: {{ session.get('email', 'Not logged in') }}</p>
-        <p>User ID: {{ session.get('user_id', 'Unknown') }}</p>
-    </div>
 
     </div>
 
