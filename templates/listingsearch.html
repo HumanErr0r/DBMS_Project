@@ -5,17 +5,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Listing Search</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='homepage.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='search.css') }}" />
 </head>
 
 <body>
     <header>
-        <a href="{{ url_for('homepage')}}">
-            <img src="{{url_for('static', filename='logo.png')}}" class="logo" />
-        </a>
-        <form action="{{ url_for('logout') }}" method="POST">
-            <button type="submit" class="logout-button">Log Out</button>
-        </form>
+        <div class="logo-container">
+            <a href="{{ url_for('homepage')}}">
+                <img src="{{url_for('static', filename='logo.png')}}" class="logo" />
+            </a>
+        </div>
+        <div class="logout-container">
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="logout-button">Log Out</button>
+            </form>
+        </div>
     </header>
 
     <!-- Taskbar (Navigation) -->
@@ -29,6 +33,33 @@
         </ul>
     </nav>
 
+    <div class="query">
+        <form action="/roommate_search" method="POST">
+            <span>Budget:</span>
+            <input type="number" id="budget1" name="budget1" min="0">
+            <span>-</span>
+            <input type="number" id="budget2" name="budget2" min="0">
+            <span>Rooms:</span>
+            <select id="rooms" name="rooms">
+                <option value="" disabled selected> </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <span>Bathrooms:</span>
+            <select id="leaseduration" name="leaseduration">
+                <option value="" disabled selected> </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button type="submit" class="searchbutton">Search</button>
+        </form>
+    </div>
 
 </body>
 

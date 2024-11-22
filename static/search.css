@@ -1,0 +1,150 @@
+/* Resetting body styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+/* Header styling */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+.logout-button {
+    background-color: #630031;
+    /* Logout button color */
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.logout-button:hover {
+    background-color: #E87722;
+    /* Hover color */
+}
+
+/* Taskbar styling */
+nav.taskbar {
+    background-color: #630031;
+    text-align: center;
+    padding: 10px 0;
+    margin: 20px 0;
+    /* Space between taskbar and other content */
+}
+
+nav.taskbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav.taskbar ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav.taskbar ul li button {
+    color: white;
+    background-color: #630031;
+    border: none;
+    font-size: 18px;
+    height: 50px;
+    padding: 0px 20px;
+    cursor: pointer;
+    user-select: none;
+}
+
+nav.taskbar ul li button:hover {
+    background-color: #E87722;
+}
+
+/* Section styling for the query/taskbar form */
+.query {
+    background-color: #ffffff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    /* Space between items */
+    align-items: center;
+    /* Align items vertically */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    /* Shadow for depth */
+    margin: 20px 0;
+    /* Adds space above and below */
+    border-radius: 10px;
+    /* Optional: rounded corners */
+}
+
+/* Style for form elements */
+form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Add spacing between form elements */
+    width: 100%;
+    /* Make the form take up the full width */
+}
+
+/* Input fields */
+input,
+select {
+    background-color: #ccc;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    width: 100px;
+    /* Fixed width */
+}
+
+/* Button */
+button.searchbutton {
+    background-color: #630031;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button.searchbutton:hover {
+    background-color: #E87722;
+}
+
+/* Placeholder text styling */
+input::placeholder {
+    color: #ccc;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .taskbar {
+        flex-direction: column;
+        /* Stack the taskbar items vertically */
+        align-items: flex-start;
+    }
+
+    form {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    nav.taskbar ul li {
+        display: block;
+        margin-bottom: 10px;
+        /* Stack the buttons vertically */
+    }
+}

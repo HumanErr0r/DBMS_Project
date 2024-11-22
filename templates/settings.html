@@ -10,12 +10,16 @@
 
 <body>
     <header>
-        <a href="{{ url_for('homepage')}}">
-            <img src="{{url_for('static', filename='logo.png')}}" class="logo" />
-        </a>
-        <form action="{{ url_for('logout') }}" method="POST">
-            <button type="submit" class="logout-button">Log Out</button>
-        </form>
+        <div class="logo-container">
+            <a href="{{ url_for('homepage')}}">
+                <img src="{{url_for('static', filename='logo.png')}}" class="logo" />
+            </a>
+        </div>
+        <div class="logout-container">
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="logout-button">Log Out</button>
+            </form>
+        </div>
     </header>
 
     <nav class="taskbar">
