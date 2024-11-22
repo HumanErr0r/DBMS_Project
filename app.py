@@ -312,6 +312,7 @@ def update_admin():
         update_query = "UPDATE admins SET Password = (%s) WHERE AdminID = (%s)"
         cursor.execute(update_query, (hashed_password, str(admin_id)))
     
+    conn.close()
     return redirect(url_for('admin_settings'))
 
 @app.route('/generate_reports', methods = ['POST'])
@@ -346,6 +347,7 @@ def generate_reports():
         }
 
         report_2_data.append(report_2_info)
+    conn.close()
     return render_template('report.html', report_1 = report_1_data, report_2 = report_2_data)
 
 @app.route('/add_property', methods = ['POST'])
@@ -716,6 +718,7 @@ def view_listing_info(listing_id):
             "phone_number": phone_number
         }
         user_data.append(user_info)
+    conn.close()
     return render_template('listing_popup.html', property_info = property_info, review_info = review_data, user_info = user_data)
 
 @app.route('/listings', methods = ['POST'])
@@ -768,7 +771,7 @@ def manage_your_listings():
         }
 
         listings_data.append(listing_info)
-
+    conn.close()
     return render_template('listings.html', listings = listings_data)
 
 @app.route('/add_review/<int:property_id>/<int:user_id>', methods = ['POST'])
@@ -866,7 +869,7 @@ def get_review_data(property_id):
         }
 
         review_data['reviews'].append(reivew_dict)
-
+    conn.close()
     return review_data
 
 @app.route('/delete_review/<int:review_id>', methods = ['POST'])
