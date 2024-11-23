@@ -968,6 +968,14 @@ def add_preferences(user_id):
         # probably need to change the html this refers to
         return render_template('add_preferences.html', message = "User does not exist. Create an account"), 400
     
+    check_user_preferences_query = "SELECT * FROM preferences WHERE UserID = (%s)"
+    cursor.execute(check_user_preferences_query, (str(user_id)))
+    existing_preferences = cursor.fetchone()
+
+    if existing_preferences is not None:
+        conn.close()
+        return redirect(url_for('preferences', message="You already have preferences set"))
+
     check_num_preferences_query = "SELECT PreferenceID FROM preferences"
     cursor.execute(check_num_preferences_query)
     preferences = cursor.fetchall()
