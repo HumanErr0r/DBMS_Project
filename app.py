@@ -370,7 +370,7 @@ def generate_reports():
 
         report_2_data.append(report_2_info)
     conn.close()
-    return render_template('report.html', report_1 = report_1_data, report_2 = report_2_data)
+    return render_template('reports.html', report_1 = report_1_data, report_2 = report_2_data)
 
 @app.route('/add_property', methods = ['POST'])
 def add_property():
