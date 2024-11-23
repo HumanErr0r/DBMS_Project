@@ -625,7 +625,7 @@ def delete_listing(listing_id):
     conn.close()
 
     # probably need to change the html this refers to
-    return manage_your_listings()
+    return redirect(url_for('listings', message="Listing successfully deleted"))
 
 @app.route('/update_listing/<int:listing_id>', methods = ['POST'])
 def update_listing(listing_id):
@@ -665,7 +665,7 @@ def update_listing(listing_id):
     conn.close()
 
     # probably need to change the html this refers to
-    return redirect(url_for('listings'))  # This will refresh the page with new data
+    return redirect(url_for('listings', message="Listing successfully updated!"))
 
 @app.route('/view_listing_info/<int:listing_id>', methods = ['POST'])
 def view_listing_info(listing_id):
@@ -1083,7 +1083,7 @@ def add_listing_interest(listing_id, user_id):
     conn.close()
 
     # probably need to change the html this refers to
-    return render_template('add_listing_interest.html', message = "Listing interest successfully created", listing_interest_id = listing_interest_id)
+    return redirect(url_for('listings', message="Listing successfully created"))
 
 @app.route('/delete_listing_interest/<int:listing_interest_id>', methods = ['POST'])
 def delete_listing_interest(listing_interest_id):
