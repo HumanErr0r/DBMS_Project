@@ -73,7 +73,23 @@ def listings():
 
 @app.route('/preferences')
 def preferences():
-    return render_template('preferences.html')
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM preferences WHERE UserID = %s", (session['user_id'],))
+    preference = cursor.fetchone()
+    
+    conn.close()
+
+    # Get message from URL parameters if it exists
+    message = request.args.get('message')
+    
+    return render_template('preferences.html', 
+                         preference=preference,
+                         message=message if message else None)
 
 @app.route('/settings')
 def settings():
@@ -1026,7 +1042,7 @@ def update_preferences(preference_id):
     conn.commit()
     conn.close()
 
-    return redirect(url_for('preferences'))  # This will refresh the page with new 
+    return redirect(url_for('preferences', message="Preferences successfully updated!"))
 
 @app.route('/add_listing_interest/<int:listing_id>/<int:user_id>', methods = ['POST'])
 def add_listing_interest(listing_id, user_id):
