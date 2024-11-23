@@ -63,28 +63,62 @@
 
     <h1>Roommate Search Results</h1>
 
-    <!-- Check if there are any roommates to display -->
     {% if roommates %}
-    <div class="roommates-list">
-        <!-- Loop through each roommate in the roommates data -->
-        {% for roommate in roommates %}
-        <div class="roommate-card">
-            <h2>{{ roommate.name }}</h2>
-            <p><strong>Email:</strong> {{ roommate.email }}</p>
-            <p><strong>Phone:</strong> {{ roommate.phone }}</p>
-            <p><strong>Gender:</strong> {{ roommate.gender }}</p>
-            <p><strong>Zip Code:</strong> {{ roommate.zip_code }}</p>
-            <p><strong>Budget:</strong> ${{ roommate.budget }}</p>
-            <p><strong>Rooms Needed:</strong> {{ roommate.rooms }}</p>
-            <p><strong>Property Type:</strong> {{ roommate.property_type }}</p>
-            <p><strong>Lease Duration:</strong> {{ roommate.lease_duration }} semesters</p>
-        </div>
-        {% endfor %}
+    <div class="listings-list">
+        <table class="listing-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Budget</th>
+                    <th>Rooms</th>
+                    <th>Zip Code</th>
+                    <th>Lease Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for roommate in roommates %}
+                <tr class="listing-row" onclick="openModal('{{ roommate.email }}')">
+                    <td>{{ roommate.name }}</td>
+                    <td>{{ roommate.budget }}</td>
+                    <td>{{ roommate.rooms }}</td>
+                    <td>{{ roommate.zip_code }}</td>
+                    <td>${{ roommate.lease_duration }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    {% else %}
-    <p>No roommates found that match your criteria.</p>
-    {% endif %}
 
+    <!-- Modals for each listing -->
+    {% for roommate in roommates %}
+    <div id="modal-{{ roommate.email }}" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('{{ roommate.email }}')">&times;</span>
+            <table class="modal-table">
+                <tr>
+                    <td><strong>Name:</strong></td>
+                    <td>{{ roommate.name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>{{ roommate.email }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Phone:</strong></td>
+                    <td>{{ roommate.phone }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Gender:</strong></td>
+                    <td>{{ roommate.gender }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <p>No listings found that match your criteria.</p>
+    {% endif %}
 
     <script src="{{url_for('static', filename='modal.js')}}"></script>
 
