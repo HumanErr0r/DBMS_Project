@@ -91,6 +91,18 @@ def preferences():
                          preference=preference,
                          message=message if message else None)
 
+@app.route('/admin_settings')
+def admin_settings():
+    if 'admin_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin_settings.html')
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if 'admin_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin_dashboard.html')
+
 @app.route('/settings')
 def settings():
     if 'user_id' not in session:
@@ -110,12 +122,6 @@ def settings():
         session['email'] = user[3]
 
     return render_template('settings.html', user=user)  # Pass user to template
-
-@app.route('/admin_settings')
-def admin_settings():
-    if 'admin_id' not in session:
-        return redirect(url_for('login'))
-    return render_template('admin_settings.html')
 
 @app.route('/add_user', methods = ['POST'])
 def add_user():
@@ -277,7 +283,7 @@ def sign_in():
         # the report will detail the number of listings and users there are (or something else thats similar)
         
         conn.close()
-        return render_template('homepage.html', message = "Login successful")
+        return render_template('admin_dashboard.html', message = "Login successful")
     
 
     check_user_exist_query = "SELECT * FROM users WHERE Email = (%s)"
@@ -327,7 +333,7 @@ def update_admin():
         hashed_password = bcrypt.hashpw(data.get('password').encode('utf-8'), bcrypt.gensalt())
         update_query = "UPDATE admins SET Password = (%s) WHERE AdminID = (%s)"
         cursor.execute(update_query, (hashed_password, str(admin_id)))
-    
+        conn.commit()
     conn.close()
     return redirect(url_for('admin_settings'))
 
