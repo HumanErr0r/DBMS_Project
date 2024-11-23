@@ -148,29 +148,29 @@
                             <h4>Update Listing Information</h4>
                             <div class="form-row">
                                 <label for="title">Title:</label>
-                                <input type="text" id="title" name="title" placeholder="Current: {{ listing[7] }}">
+                                <input type="text" id="title" name="title" placeholder="{{ listing.listing_title }}">
                             </div>
                             <div class="form-row">
                                 <label for="squarefeet">Square Feet:</label>
                                 <input type="text" id="squarefeet" name="squarefeet"
-                                    placeholder="Current: {{ listing[3] }}">
+                                    placeholder="{{ listing.square_feet }}">
                             </div>
                             <div class="form-row">
                                 <label for="source">Source:</label>
-                                <input type="text" id="source" name="source" placeholder="Current: {{ listing[4] }}">
+                                <input type="text" id="source" name="source" placeholder="{{ listing.source }}">
                             </div>
                             <div class="form-row">
                                 <label for="price">Price:</label>
-                                <input type="text" id="price" name="price" placeholder="Current: {{ listing[5] }}">
+                                <input type="text" id="price" name="price" placeholder="{{ listing.price }}">
                             </div>
                             <div class="form-row">
                                 <label for="rooms">Rooms:</label>
-                                <input type="text" id="rooms" name="rooms" placeholder="Current: {{ listing[6] }}">
+                                <input type="text" id="rooms" name="rooms" placeholder="{{ listing.rooms }}">
                             </div>
                             <div class="form-row">
                                 <label for="bathrooms">Bathrooms:</label>
                                 <input type="text" id="bathrooms" name="bathrooms"
-                                    placeholder="Current: {{ listing[8] }}">
+                                    placeholder="{{ listing.bathrooms }}">
                             </div>
                             <button type="submit" class="update-btn">Update Listing</button>
                         </form>
