@@ -77,10 +77,10 @@
                 {% for listing in listings %}
                 <tr class="listing-row" onclick="openModal('{{ listing.listing_id }}')">
                     <td>{{ listing.title }}</td>
-                    <td>{{ listing.price }}</td>
+                    <td>${{ listing.price }}</td>
                     <td>{{ listing.sq_feet }}</td>
                     <td>{{ listing.rooms }}</td>
-                    <td>${{ listing.bathrooms }}</td>
+                    <td>{{ listing.bathrooms }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
