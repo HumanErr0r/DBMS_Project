@@ -595,6 +595,9 @@ def get_listings():
         price = listing[5]
         source = listing[4]
 
+        cursor.execute("SELECT 1 FROM listing_interest WHERE ListingID = %s AND UserID = %s", (listing_id, str(session['user_id'])))
+        has_interest = cursor.fetchone() is not None
+
         listing_info = {
             "listing_id": listing_id,
             "owner_name": owner_name,
@@ -604,7 +607,8 @@ def get_listings():
             "rooms": rooms,
             "bathrooms": bathrooms,
             "price": price,
-            "source": source
+            "source": source,
+            "has_interest": has_interest,
         }
 
         listings_data.append(listing_info)
@@ -1069,7 +1073,7 @@ def add_listing_interest(listing_id, user_id):
     if listing is None:
         conn.close()
         # probably need to change the html this refers to
-        return render_template('add_listing_interest.html', message = "Listing does not exist"), 400
+        return jsonify({'status': 'error', 'message': 'Listing does not exist'}), 400
 
     check_user_exist_query = "SELECT * FROM users WHERE UserID = (%s)"
     cursor.execute(check_user_exist_query, (str(user_id)))
@@ -1078,7 +1082,16 @@ def add_listing_interest(listing_id, user_id):
     if user is None:
         conn.close()
         # probably need to change the html this refers to
-        return render_template('add_preferences.html', message = "User does not exist. Create an account"), 400
+        return jsonify({'status': 'error', 'message': 'User does not exist. Create an account'}), 400
+    
+    check_interest_exist_query = "SELECT * FROM listing_interest WHERE ListingID = %s AND UserID = %s"
+    cursor.execute(check_interest_exist_query, (listing_id, user_id))
+    existing_interest = cursor.fetchone()
+ 
+    if existing_interest:
+        conn.close()
+        return jsonify({'status': 'error', 'message': 'You have already shown interest in this listing'}), 400
+
     
     check_num_listing_interest_query = "SELECT ListingInterestGroupID FROM listing_interest"
     cursor.execute(check_num_listing_interest_query)
@@ -1090,35 +1103,39 @@ def add_listing_interest(listing_id, user_id):
     else:
         listing_interest_id = 1
 
-    insert_query = "INSERT INTO preferences VALUES (%s, %s, %s)"
+    insert_query = "INSERT INTO listing_interest  VALUES (%s, %s, %s)"
     cursor.execute(insert_query, (str(listing_interest_id), str(listing_id), str(user_id)))
     conn.commit()
     conn.close()
 
     # probably need to change the html this refers to
-    return redirect(url_for('listings', message="Listing successfully created"))
+    return jsonify({'status': 'success', 'message': 'Interest successfully submitted'}), 200
 
-@app.route('/delete_listing_interest/<int:listing_interest_id>', methods = ['POST'])
-def delete_listing_interest(listing_interest_id):
+@app.route('/delete_listing_interest/<int:listing_id>/<int:user_id>', methods = ['POST'])
+def delete_listing_interest(listing_id, user_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    check_listing_interest_exist_query = "SELECT * FROM listing_interest WHERE ListingInterestGroupID = (%s)"
-    cursor.execute(check_listing_interest_exist_query, (listing_interest_id))
+
+    check_listing_interest_exist_query = """
+        SELECT ListingInterestGroupID 
+        FROM listing_interest 
+        WHERE ListingID = %s AND UserID = %s
+    """
+    cursor.execute(check_listing_interest_exist_query, (str(listing_id), str(user_id)))
     listing_interest = cursor.fetchone()
 
     if listing_interest is None:
         conn.close()
-        # probably need to change the html this refers to
-        return render_template('listing_interests.html', message = "Listing interests do not exist"), 400
+        return {'success': False, 'message': "Listing interest does not exist"}, 400
     
-    delete_query = "DELETE FROM listing_interest WHERE ListingInterestGroupID = (%s)"
+    listing_interest_id = listing_interest[0]
+
+    delete_query = "DELETE FROM listing_interest WHERE ListingInterestGroupID = %s"
     cursor.execute(delete_query, (listing_interest_id))
     conn.commit()
     conn.close()
 
-    # probably need to change the html this refers to
-    return render_template('listing_interest.html', message = "Listing interest successfully deleted")
+    return {'success': True, 'message': "Listing interest successfully deleted"}, 200
 
 @app.route('/roommate_search', methods = ['POST'])
 def roommate_search():
