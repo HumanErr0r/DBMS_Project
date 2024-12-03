@@ -71,16 +71,33 @@
                     <th>Square Feet</th>
                     <th>Rooms</th>
                     <th>Bathrooms</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for listing in listings %}
                 <tr class="listing-row" onclick="openModal('{{ listing.listing_id }}')">
                     <td>{{ listing.title }}</td>
-                    <td>{{ listing.price }}</td>
+                    <td>${{ listing.price }}</td>
                     <td>{{ listing.sq_feet }}</td>
                     <td>{{ listing.rooms }}</td>
-                    <td>${{ listing.bathrooms }}</td>
+                    <td>{{ listing.bathrooms }}</td>
+                    <td>
+                        <form id="interest-form-{{ listing.listing_id }}"
+                            action="/add_listing_interest/{{ listing.listing_id }}/{{ session.get('user_id') }}"
+                            method="POST" style="{{ 'display:none;' if listing.has_interest else 'display:block;' }}">
+                            <button type="button" class="submit-button"
+                                onclick="submitInterestForm('{{ listing.listing_id }}')">I'm
+                                Interested</button>
+                        </form>
+
+                        <form id="delete-interest-form-{{ listing.listing_id }}"
+                            action="/delete_listing_interest/{{ listing.listing_id }}/{{ session.get('user_id') }}"
+                            method="POST" style="{{ 'display:block;' if listing.has_interest else 'display:none;' }}">
+                            <button type="button" class="submit-button"
+                                onclick="submitDeleteInterestForm('{{ listing.listing_id }}')">Remove Interest</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -131,6 +148,110 @@
     <p>No listings found that match your criteria.</p>
     {% endif %}
     <script src="{{url_for('static', filename='modal.js')}}"></script>
+
+    <script>
+        function submitInterestForm(listingId) {
+            var form = document.getElementById('interest-form-' + listingId);
+            var button = form.querySelector('button');
+            button.disabled = true;
+            button.textContent = "Adding...";
+
+            var formData = new FormData(form);
+
+            // Perform the AJAX request using the Fetch API
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // If the response was successful, update the UI
+                    alert(data.message);
+
+                    // Toggle visibility of the forms
+                    var interestForm = document.getElementById('interest-form-' + listingId);
+                    var deleteInterestForm = document.getElementById('delete-interest-form-' + listingId);
+
+                    if (interestForm) {
+                        interestForm.style.display = 'none';
+                    }
+
+                    if (deleteInterestForm) {
+                        deleteInterestForm.style.display = 'block';
+                    }
+
+                    // Reset the button text and re-enable the button
+                    button.textContent = "I'm Interested";
+                    button.disabled = false;
+                })
+                .catch(error => {
+                    // Handle errors
+                    alert(error.message);
+
+                    // Reset the button state if there was an error
+                    button.textContent = "I'm Interested";
+                    button.disabled = false;
+                });
+        }
+
+        function submitDeleteInterestForm(listingId) {
+            var form = document.getElementById('delete-interest-form-' + listingId);
+            var button = form.querySelector('button');
+            button.disabled = true;
+            button.textContent = "Removing...";
+
+            var formData = new FormData(form);
+
+            // Perform the AJAX request using the Fetch API
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // If the response was successful, update the UI
+                    alert(data.message);
+
+                    // Toggle visibility of the forms
+                    var deleteInterestForm = document.getElementById('delete-interest-form-' + listingId);
+                    var interestForm = document.getElementById('interest-form-' + listingId);
+
+                    if (deleteInterestForm) {
+                        deleteInterestForm.style.display = 'none';
+                    }
+
+                    if (interestForm) {
+                        interestForm.style.display = 'block';
+                    }
+
+                    // Reset the button text and re-enable the button
+                    button.textContent = "Remove Interest";
+                    button.disabled = false;
+                })
+                .catch(error => {
+                    // Handle errors
+                    alert(error.message);
+
+                    // Reset the button state if there was an error
+                    button.textContent = "Remove Interest";
+                    button.disabled = false;
+                });
+        }
+    </script>
 </body>
 
 </html>

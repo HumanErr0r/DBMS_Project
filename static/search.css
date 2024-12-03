@@ -229,3 +229,19 @@ input::placeholder {
     text-decoration: none;
     cursor: pointer;
 }
+
+.submit-button {
+    background-color: #630031;
+    /* Green background */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.submit-button:hover {
+    background-color: #E87722;
+    /* Darker green on hover */
+}
