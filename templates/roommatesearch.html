@@ -79,10 +79,10 @@
                 {% for roommate in roommates %}
                 <tr class="listing-row" onclick="openModal('{{ roommate.email }}')">
                     <td>{{ roommate.name }}</td>
-                    <td>{{ roommate.budget }}</td>
+                    <td>${{ roommate.budget }}</td>
                     <td>{{ roommate.rooms }}</td>
                     <td>{{ roommate.zip_code }}</td>
-                    <td>${{ roommate.lease_duration }}</td>
+                    <td>{{ roommate.lease_duration }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
