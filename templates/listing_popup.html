@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='popup.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Listing Details</h1>
+
+        <div class="property-info">
+            <p><strong>Name:</strong> {{ property_info.property_name }}</p>
+            <p><strong>Street:</strong> {{ property_info.street }}</p>
+            <p><strong>City:</strong> {{ property_info.city }}</p>
+            <p><strong>State:</strong> {{ property_info.state }}</p>
+            <p><strong>Zip Code:</strong> {{ property_info.zip_code }}</p>
+            <p><strong>Property Source:</strong> {{ property_info.property_source }}</p>
+            <p><strong>Listing Source:</strong> {{ property_info.listing_source }}</p>
+        </div>
+
+
+        <div class="interested-users">
+            <h2>People Interested in this Listing</h2>
+            {% if user_info %}
+            <table class="listing-table">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email Address</th>
+                        <th>Phone Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in user_info %}
+                    <tr>
+                        <td>{{ user.user_name.split(' ')[0] }}</td> <!-- First Name -->
+                        <td>{{ user.user_name.split(' ')[1] }}</td> <!-- Last Name -->
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone_number }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No users have shown interest in this listing yet.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+</body>
+
+</html>

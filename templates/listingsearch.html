@@ -72,6 +72,7 @@
                     <th>Rooms</th>
                     <th>Bathrooms</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -82,12 +83,13 @@
                     <td>{{ listing.sq_feet }}</td>
                     <td>{{ listing.rooms }}</td>
                     <td>{{ listing.bathrooms }}</td>
+
                     <td>
                         <form id="interest-form-{{ listing.listing_id }}"
                             action="/add_listing_interest/{{ listing.listing_id }}/{{ session.get('user_id') }}"
                             method="POST" style="{{ 'display:none;' if listing.has_interest else 'display:block;' }}">
                             <button type="button" class="submit-button"
-                                onclick="submitInterestForm('{{ listing.listing_id }}')">I'm
+                                onclick="submitInterestForm('{{ listing.listing_id }}'); event.stopPropagation();">I'm
                                 Interested</button>
                         </form>
 
@@ -95,7 +97,15 @@
                             action="/delete_listing_interest/{{ listing.listing_id }}/{{ session.get('user_id') }}"
                             method="POST" style="{{ 'display:block;' if listing.has_interest else 'display:none;' }}">
                             <button type="button" class="submit-button"
-                                onclick="submitDeleteInterestForm('{{ listing.listing_id }}')">Remove Interest</button>
+                                onclick="submitDeleteInterestForm('{{ listing.listing_id }}'); event.stopPropagation();">Remove
+                                Interest</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/view_listing_info/{{ listing.listing_id }}" method="POST" target="_blank">
+                            <button type="button" class="submit-button"
+                                onclick="this.form.submit(); event.stopPropagation();">View Others
+                                Interested</button>
                         </form>
                     </td>
                 </tr>

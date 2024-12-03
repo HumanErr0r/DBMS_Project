@@ -1,0 +1,96 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 20px;
+}
+
+h1,
+h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Container for the whole page */
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Section for Property Information */
+.property-info {
+    margin-bottom: 30px;
+}
+
+.property-info p {
+    font-size: 1.1em;
+    margin: 8px 0;
+}
+
+.property-info p strong {
+    color: #555;
+}
+
+/* Section for Interested Users */
+/* Style for the listings table */
+.listing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.listing-table th,
+.listing-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.listing-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.listing-table tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+/* No Users Message */
+.interested-users p {
+    font-size: 1.1em;
+    color: #888;
+}
+
+
+
+/* Responsive Design for Mobile Devices */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .property-info p {
+        font-size: 1em;
+    }
+
+    .interested-users table th,
+    .interested-users table td {
+        padding: 8px;
+    }
+}
