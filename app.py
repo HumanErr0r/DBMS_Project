@@ -997,8 +997,7 @@ def add_preferences(user_id):
     conn.commit()
     conn.close()
 
-    # probably need to change the html this refers to
-    return render_template('preferences.html', message = "Account successfully created", preference_id = preference_id)
+    return redirect(url_for('preferences', message = "Preferences successfully added!"))
 
 @app.route('/delete_preferences/<int:preference_id>', methods = ['POST'])
 def delete_preferences(preference_id):
@@ -1020,7 +1019,7 @@ def delete_preferences(preference_id):
     conn.close()
 
     # probably need to change the html this refers to
-    return render_template('settings.html', message = "Preferences successfully deleted")
+    return render_template('preferences.html', message = "Preferences successfully deleted")
 
 @app.route('/update_preferences/<int:preference_id>', methods = ['POST'])
 def update_preferences(preference_id):
